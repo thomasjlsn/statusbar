@@ -8,6 +8,7 @@ install:
 	@cp -fv statusd.service /etc/systemd/system/statusd.service
 	@systemctl start statusd.service
 	@systemctl enable statusd.service
+	@make reload  # Just in case
 
 reload:
 	@systemctl daemon-reload
