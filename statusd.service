@@ -1,0 +1,12 @@
+[Unit]
+Description=statusbar server for tmux and similar
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/statusd
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
