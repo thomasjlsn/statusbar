@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""new.py"""
+"""A Server producing the status bar."""
 
 import os
+import socket
+import logging
 import time
 from threading import Event, Thread
 
@@ -64,7 +66,27 @@ class Component(SharedData):
 
 class StatusBar(Component):
     """The status bar as a whole. Needs its own unique dataset."""
-    data = {}
+    data = ''
+
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind((socket.gethostname(), 8787))
+    server.listen(5)
+
+    def update(self):
+        self.data = self.source()
+
+    def run(self):
+        try:
+            while True:
+                client, address = self.server.accept()
+                self.update()
+                logging.info(f'connection from: {address}')
+                client.send(bytes(self.data, 'utf-8'))
+                if teardown.is_set():
+                    break
+        finally:
+            self.server.close()
 
 
 class Segment(Component):
