@@ -39,10 +39,12 @@ class Component(SharedData):
         self.weight = weight      # Used to determine order of components
 
     def update(self):
-        if self.label is not None:
-            self.data[self.weight] = f'{self.label}: {self.source()}'
-        else:
-            self.data[self.weight] = self.source()
+        component = self.source()
+        if component is not None:
+            if self.label is not None:
+                self.data[self.weight] = f'{self.label}: {component}'
+            else:
+                self.data[self.weight] = component
 
     def out(self):
         if self.sink is not None:
@@ -187,8 +189,8 @@ def interfaces():
 
     for interface in (d for d in os.listdir('/sys/class/net/') if d != 'lo'):
         with open(f'/sys/class/net/{interface}/operstate', 'r') as s:
-            ifs = f'{ifs} {interface[:3]}: {ifstate[s.readline().strip()]}'
 
+            ifs = f'{ifs} {interface[:3]}: {ifstate[s.readline().strip()]}'
     return ifs.strip()
 
 
@@ -216,20 +218,24 @@ def readint(file):
 
 def battery_percentage() -> str:
     """Returns current battery percentage"""
-    bat0 = ((100 / readint('/sys/class/power_supply/BAT0/energy_full'))
-            * readint('/sys/class/power_supply/BAT0/energy_now'))
+    try:
+        bat0 = ((100 / readint('/sys/class/power_supply/BAT0/energy_full'))
+                * readint('/sys/class/power_supply/BAT0/energy_now'))
 
-    bat1 = ((100 / readint('/sys/class/power_supply/BAT1/energy_full'))
-            * readint('/sys/class/power_supply/BAT1/energy_now'))
+        bat1 = ((100 / readint('/sys/class/power_supply/BAT1/energy_full'))
+                * readint('/sys/class/power_supply/BAT1/energy_now'))
 
-    percent = f'{((bat0 + bat1) / 2):.2f}'
+        percent = f'{((bat0 + bat1) / 2):.2f}'
 
-    charging = readint('/sys/class/power_supply/AC/online')
+        charging = readint('/sys/class/power_supply/AC/online')
 
-    if charging:
-        return f'{percent}% ++'
+        if charging:
+            return f'{percent}% ++'
 
-    return f'{percent}%'
+        return f'{percent}%'
+
+    except FileNotFoundError:
+        return None
 
 
 battery = Segment(
@@ -245,15 +251,11 @@ if __name__ == '__main__':
     # Run the status bar.
     # ======================================================================
 
-    target_threads = [status_bar]  # Main thread
+    # Main thread, required
+    target_threads = [status_bar]
 
-    target_threads += [  # Optional threads
-        battery,
-        clock,
-        cpu,
-        net,
-        ram,
-    ]
+    # Optional threads
+    target_threads += [battery, clock, cpu, net, ram]
 
     threads = [Thread(target=thread.run) for thread in target_threads]
 
