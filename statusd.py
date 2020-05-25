@@ -269,7 +269,7 @@ net = Segment(
 
 try:
     bl_max = readint(glob('/sys/class/backlight/*/max_brightness')[0])
-except FileNotFoundError:
+except (FileNotFoundError, IndexError):
     pass
 
 
