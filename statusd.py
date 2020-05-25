@@ -15,6 +15,33 @@ teardown = Event()
 
 
 # ==========================================================================
+# Helper functions.
+# ==========================================================================
+
+def laptop_open():
+    """Check if laptop lid is open."""
+    try:
+        with open('/proc/acpi/button/lid/LID/state', 'r') as f:
+            state = f.readline().split()[1]
+        if state.lower() == 'open':
+            return True
+        return False
+    except FileNotFoundError:
+        return True
+
+
+def readint(file):
+    """
+    Many files in /sys/class/* contain single integer values.
+    This reduces boilerplate.
+    """
+    with open(file, 'r') as f:
+        val = int(f.readline())
+
+    return val
+
+
+# ==========================================================================
 # Data Classes.
 # ==========================================================================
 
@@ -35,11 +62,20 @@ class Component(SharedData):
     def __init__(self, source=None, sink=None, label=None,
                  sleep_ms=1000, weight=0):
 
-        self.source = source      # The function data is recieved from
-        self.sink = sink          # The function data is sent to
-        self.label = label        # An optional label for the component
-        self.sleep_ms = sleep_ms  # Time in ms to sleep
-        self.weight = weight      # Used to determine order of components
+        # The function data is recieved from
+        self.source = source
+
+        # The function data is sent to
+        self.sink = sink
+
+        # An optional label for the component
+        self.label = label
+
+        # Time in ms to sleep, between 0.1 ... 10 seconds
+        self.sleep_ms = max(100, min(10000, sleep_ms))
+
+        # Used to determine order of components
+        self.weight = weight
 
     def update(self):
         component = self.source()
@@ -54,7 +90,11 @@ class Component(SharedData):
             self.sink(self.data[self.weight])
 
     def sleep(self):
-        time.sleep(self.sleep_ms / 1000)
+        if laptop_open():
+            time.sleep(self.sleep_ms / 1000)
+        else:
+            # Sleep longer.
+            time.sleep((self.sleep_ms * 3) / 1000)
 
     def run(self):
         while True:
@@ -133,24 +173,7 @@ status_bar = StatusBar(
 
 # ==========================================================================
 # The individual segments of the status bar.
-# ==========================================================================
-
-
-# ==========================================================================
-# Helper functions.
-# ==========================================================================
-
-def readint(file):
-    """
-    Many files in /sys/class/* contain single integer values.
-    This reduces boilerplate.
-    """
-    with open(file, 'r') as f:
-        val = int(f.readline())
-
-    return val
-
-
+#
 # ==========================================================================
 # A Clock.
 # ==========================================================================
