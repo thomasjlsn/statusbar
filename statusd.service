@@ -2,6 +2,8 @@
 Description=statusbar server for tmux and similar
 Wants=network-online.target
 After=network-online.target
+Requires=network-manager.service
+PartOf=network-manager.service
 
 [Service]
 ExecStart=/usr/local/bin/statusd
