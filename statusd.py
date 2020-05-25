@@ -5,6 +5,7 @@ import os
 import socket
 import logging
 import time
+from glob import glob
 from threading import Event, Thread
 
 import psutil
@@ -241,13 +242,17 @@ def readint(file):
 def battery_percentage() -> str:
     """Returns current battery percentage"""
     try:
-        bat0 = ((100 / readint('/sys/class/power_supply/BAT0/energy_full'))
-                * readint('/sys/class/power_supply/BAT0/energy_now'))
+        batteries = glob('/sys/class/power_supply/BAT*')
 
-        bat1 = ((100 / readint('/sys/class/power_supply/BAT1/energy_full'))
-                * readint('/sys/class/power_supply/BAT1/energy_now'))
+        if batteries:
+            power_levels = set()
+            for battery in batteries:
+                full = readint(f'{battery}/energy_full')
+                now = readint(f'{battery}/energy_now')
+                power = ((100 / full) * now)
+                power_levels.add(power)
 
-        percent = f'{((bat0 + bat1) / 2):.2f}'
+        percent = f'{sum(power_levels) / len(batteries):.2f}'
 
         charging = readint('/sys/class/power_supply/AC/online')
 
