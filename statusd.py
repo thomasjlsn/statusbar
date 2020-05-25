@@ -137,6 +137,21 @@ status_bar = StatusBar(
 
 
 # ==========================================================================
+# Helper functions.
+# ==========================================================================
+
+def readint(file):
+    """
+    Many files in /sys/class/* contain single integer values.
+    This reduces boilerplate.
+    """
+    with open(file, 'r') as f:
+        val = int(f.readline())
+
+    return val
+
+
+# ==========================================================================
 # A Clock.
 # ==========================================================================
 
@@ -168,7 +183,7 @@ cpu = Segment(
     source=cpu_percent,
     label='cpu',
     sleep_ms=500,
-    weight=90,
+    weight=80,
 )
 
 
@@ -198,7 +213,7 @@ ram = Segment(
     source=memory_usage,
     label='ram',
     sleep_ms=500,
-    weight=80,
+    weight=70,
 )
 
 
@@ -226,19 +241,34 @@ net = Segment(
 
 
 # ==========================================================================
-# Current battery percentage.
+# Backlight level percentage.
 # ==========================================================================
 
-def readint(file):
-    """
-    Many files in /sys/class/* contain single integer values.
-    This reduces boilerplate.
-    """
-    with open(file, 'r') as f:
-        val = int(f.readline())
+try:
+    bl_max = readint(glob('/sys/class/backlight/*/max_brightness')[0])
+except FileNotFoundError:
+    pass
 
-    return val
 
+def backlight_percentage() -> str:
+    try:
+        bl_now = readint(glob('/sys/class/backlight/*/brightness')[0])
+        return f'{int((100 / bl_max) * bl_now)}%'
+    except FileNotFoundError:
+        return None
+
+
+backlight = Segment(
+    source=backlight_percentage,
+    label='bl',
+    sleep_ms=5000,
+    weight=95,
+)
+
+
+# ==========================================================================
+# Current battery percentage.
+# ==========================================================================
 
 def battery_percentage() -> str:
     """Returns current battery percentage"""
@@ -270,7 +300,7 @@ battery = Segment(
     source=battery_percentage,
     label='bat',
     sleep_ms=10000,
-    weight=99,
+    weight=90,
 )
 
 
@@ -283,7 +313,7 @@ if __name__ == '__main__':
     target_threads = [status_bar]
 
     # Optional threads
-    target_threads += [battery, clock, cpu, net, ram]
+    target_threads += [battery, backlight, clock, cpu, net, ram]
 
     threads = [Thread(target=thread.run) for thread in target_threads]
 
