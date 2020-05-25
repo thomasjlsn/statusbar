@@ -177,7 +177,7 @@ cpu = Segment(
 # ==========================================================================
 
 def memory_usage():
-    """Memory in megabytes."""
+    """Memory displayed in largest unit."""
     mem = psutil.virtual_memory()._asdict()['used']
     units = {
         'K': 1_000,
@@ -191,6 +191,7 @@ def memory_usage():
         return f'{int(mem / units["M"])}M'
     elif mem in range(1_000_000_000, 1_000_000_000_000):
         return f'{mem / units["G"]:.2f}G'
+    return str(mem)
 
 
 ram = Segment(
