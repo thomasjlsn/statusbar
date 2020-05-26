@@ -41,13 +41,42 @@ def readint(file):
     return val
 
 
+# Assign unicode bars to percentages to make meters.
+meter = {0: '    '}
+
+# meter_ = [' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█']
+meter_ = [
+    '▏   ', '▎   ', '▍   ', '▌   ', '▋   ', '▊   ', '▉   ', '█   ',
+    '█▏  ', '█▎  ', '█▍  ', '█▌  ', '█▋  ', '█▊  ', '█▉  ', '██  ',
+    '██▏ ', '██▎ ', '██▍ ', '██▌ ', '██▋ ', '██▊ ', '██▉ ', '███ ',
+    '███▏', '███▎', '███▍', '███▌', '███▋', '███▊', '███▉', '████',
+]
+
+for percent in range(1, 101):
+    end = 0
+    for i, icon in enumerate(meter_):
+        start = end
+        end = (100 / len(meter_)) * i
+        if start < percent > end:
+            meter[percent] = meter_[i]
+
+
+def fancy_meter(percentage=None, current=None, maximum=None):
+    if percentage is None:
+        val = ((100 / maximum) * current)
+    else:
+        val = percentage
+
+    return meter[int(val)]
+
+
 # ==========================================================================
-# Data Classes.
+# Data Classes / Globals
 # ==========================================================================
 
-class Config:
-    surround = '  '  # Could be something like '[]', '<>', etc.
-    seperator = '|'
+seperator = ''
+lpad = ' '
+rpad = ' '
 
 
 class SharedData:
@@ -71,8 +100,8 @@ class Component(SharedData):
         # An optional label for the component
         self.label = label
 
-        # Time in ms to sleep, between 0.1 ... 10 seconds
-        self.sleep_ms = max(100, min(10000, sleep_ms))
+        # Time in ms to sleep, between 0.5 ... 10 seconds
+        self.sleep_ms = max(500, min(10000, sleep_ms))
 
         # Used to determine order of components
         self.weight = weight
@@ -81,7 +110,7 @@ class Component(SharedData):
         component = self.source()
         if component is not None:
             if self.label is not None:
-                self.data[self.weight] = f'{self.label}: {component}'
+                self.data[self.weight] = f'{self.label.upper()}: {component}'
             else:
                 self.data[self.weight] = component
 
@@ -153,11 +182,9 @@ def tmp(data):
 # ==========================================================================
 
 def make_bar():
-    return Config.seperator.join([
+    return seperator.join([
         ''.join([
-            Config.surround[0],
-            str(SharedData.data[component]),
-            Config.surround[1],
+            lpad, str(SharedData.data[component]), rpad
         ])
         for component in sorted(SharedData.data.keys())
         if SharedData.data[component] is not None
@@ -196,16 +223,13 @@ clock = Segment(
 def cpu_percent():
     usage = psutil.cpu_percent()
 
-    if usage < 1:
-        return 'idle'
-
-    return f'{usage:.1f}%'.zfill(5)
+    return fancy_meter(usage)
 
 
 cpu = Segment(
     source=cpu_percent,
     label='cpu',
-    sleep_ms=500,
+    sleep_ms=250,
     weight=80,
 )
 
@@ -216,20 +240,12 @@ cpu = Segment(
 
 def memory_usage():
     """Memory displayed in largest unit."""
-    mem = psutil.virtual_memory()._asdict()['used']
-    units = {
-        'K': 1_000,
-        'M': 1_000_000,
-        'G': 1_000_000_000,
-    }
+    mem = psutil.virtual_memory()._asdict()
 
-    if mem in range(1_000, 1_000_000):
-        return f'{int(mem / units["K"])}K'
-    elif mem in range(1_000_000, 1_000_000_000):
-        return f'{int(mem / units["M"])}M'
-    elif mem in range(1_000_000_000, 1_000_000_000_000):
-        return f'{mem / units["G"]:.2f}G'
-    return str(mem)
+    return fancy_meter(
+        current=mem['used'],
+        maximum=mem['total'],
+    )
 
 
 ram = Segment(
@@ -246,14 +262,18 @@ ram = Segment(
 
 def interfaces():
     """Returns state of network interfaces"""
-    ifs = ''
-    ifstate = {'up': '+', 'down': '-'}
+    interfaces = [d for d in os.listdir('/sys/class/net/') if d != 'lo']
+    up = []
 
-    for interface in (d for d in os.listdir('/sys/class/net/') if d != 'lo'):
+    for interface in interfaces:
         with open(f'/sys/class/net/{interface}/operstate', 'r') as s:
+            if s.readline().strip() == 'up':
+                up.append(interface)
 
-            ifs = f'{ifs} {interface[:3]}: {ifstate[s.readline().strip()]}'
-    return ifs.strip()
+    if not up:
+        return 'offline'
+
+    return ' '.join(up)
 
 
 net = Segment(
@@ -274,6 +294,7 @@ except (FileNotFoundError, IndexError):
 
 
 def backlight_percentage() -> str:
+    return None
     try:
         bl_now = readint(glob('/sys/class/backlight/*/brightness')[0])
         return f'{int((100 / bl_max) * bl_now)}%'
@@ -306,14 +327,17 @@ def battery_percentage() -> str:
                 power = ((100 / full) * now)
                 power_levels.add(power)
 
-        percent = f'{sum(power_levels) / len(batteries):.2f}'
+        percent = int(sum(power_levels) / len(batteries))
+
 
         charging = readint('/sys/class/power_supply/AC/online')
 
         if charging:
-            return f'{percent}% ++'
+            if percent > 99:
+                return f'{fancy_meter(percent)} full'
+            return f'{fancy_meter(percent)} ++'
 
-        return f'{percent}%'
+        return fancy_meter(percent)
 
     except FileNotFoundError:
         return None
