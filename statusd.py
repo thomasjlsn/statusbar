@@ -32,7 +32,7 @@ def laptop_open():
 
 def readint(file):
     """
-    Many files in /sys/class/* contain single integer values.
+    Many files in /sys/* and /proc/* contain single integer values.
     This reduces boilerplate.
     """
     with open(file, 'r') as f:
@@ -220,18 +220,21 @@ clock = Segment(
 # Disk usage.
 # ==========================================================================
 
-df_cmd = f'df /dev/sda1 --output=pcent'
+def disk_label():
+    if readint('/sys/block/sda/queue/rotational'):
+        return 'hdd'
+    return 'ssd'
 
 
 def disk_usage():
-    return fancy_meter(
-        int(os.popen(df_cmd).readlines()[1].strip()[:-1])
-    )
+    return fancy_meter(int(
+        os.popen('df /dev/sda1 --output=pcent').readlines()[1].strip()[:-1]
+    ))
 
 
 disk = Segment(
     source=disk_usage,
-    label='sda',
+    label=disk_label(),
     sleep_ms=10000,
     weight=85,
 )
