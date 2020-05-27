@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """A Server producing the status bar."""
 
+import logging
 import os
 import socket
-import logging
 import time
 from glob import glob
 from threading import Event, Thread
@@ -217,6 +217,23 @@ clock = Segment(
 
 
 # ==========================================================================
+# Disk usage.
+# ==========================================================================
+
+def disk_usage():
+    return 1
+    return os.popen('df /').readlines()[1].strip().split()[4]
+
+
+disk = Segment(
+    source=disk_usage,
+    label='/',
+    sleep_ms='10000',
+    weight=85,
+)
+
+
+# ==========================================================================
 # CPU usage in percentage.
 # ==========================================================================
 
@@ -329,7 +346,6 @@ def battery_percentage() -> str:
 
         percent = int(sum(power_levels) / len(batteries))
 
-
         charging = readint('/sys/class/power_supply/AC/online')
 
         if charging:
@@ -360,7 +376,7 @@ if __name__ == '__main__':
     target_threads = [status_bar]
 
     # Optional threads
-    target_threads += [battery, backlight, clock, cpu, net, ram]
+    target_threads += [battery, backlight, clock, cpu, disk, net, ram]
 
     threads = [Thread(target=thread.run) for thread in target_threads]
 
