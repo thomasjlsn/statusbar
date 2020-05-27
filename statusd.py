@@ -220,15 +220,19 @@ clock = Segment(
 # Disk usage.
 # ==========================================================================
 
+df_cmd = f'df /dev/sda1 --output=pcent'
+
+
 def disk_usage():
-    return 1
-    return os.popen('df /').readlines()[1].strip().split()[4]
+    return fancy_meter(
+        int(os.popen(df_cmd).readlines()[1].strip()[:-1])
+    )
 
 
 disk = Segment(
     source=disk_usage,
-    label='/',
-    sleep_ms='10000',
+    label='sda',
+    sleep_ms=10000,
     weight=85,
 )
 
@@ -349,7 +353,7 @@ def battery_percentage() -> str:
         charging = readint('/sys/class/power_supply/AC/online')
 
         if charging:
-            if percent > 99:
+            if percent >= 99:
                 return f'{fancy_meter(percent)} full'
             return f'{fancy_meter(percent)} ++'
 
