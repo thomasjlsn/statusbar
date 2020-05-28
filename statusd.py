@@ -7,6 +7,7 @@ import socket
 import time
 from glob import glob
 from threading import Event, Thread
+from time import strftime
 
 import psutil
 
@@ -79,21 +80,12 @@ def fancy_meter(percentage=None, current=None, maximum=None):
 
 
 # ==========================================================================
-# Data Classes / Globals
+# Classes making up the status bar.
 # ==========================================================================
-
-seperator = ''
-lpad = ' '
-rpad = ' '
-
 
 class SharedData:
     data = {}
 
-
-# ==========================================================================
-# Classes making up the status bar.
-# ==========================================================================
 
 class Component(SharedData):
     def __init__(self, source=None, sink=None, label=None,
@@ -109,7 +101,7 @@ class Component(SharedData):
         self.label = label
 
         # Time in ms to sleep, between 0.5 ... 10 seconds
-        self.sleep_ms = max(500, min(10000, sleep_ms))
+        self.sleep_ms = max(500, min(20000, sleep_ms))
 
         # Used to determine order of components
         self.weight = weight
@@ -189,8 +181,12 @@ def tmp(data):
 #  Main status bar function.
 # ==========================================================================
 
+lpad = ' '
+rpad = ' '
+
+
 def make_bar():
-    return seperator.join([
+    return ''.join([
         ''.join([
             lpad, str(SharedData.data[component]), rpad
         ])
@@ -243,7 +239,7 @@ def disk_usage():
 disk = Segment(
     source=disk_usage,
     label=disk_label(),
-    sleep_ms=10000,
+    sleep_ms=20000,
     weight=85,
 )
 
@@ -305,6 +301,8 @@ def interfaces():
     if not up:
         return 'offline'
 
+    if int(strftime('%S')[0]) % 2 == 0:
+        return os.popen('hostname -I').readline().split()[0]
     return ' '.join(up)
 
 
@@ -346,18 +344,18 @@ backlight = Segment(
 # Current battery percentage.
 # ==========================================================================
 
-def battery_percentage() -> str:
+def battery_source() -> str:
     """Returns current battery percentage"""
     try:
         batteries = glob('/sys/class/power_supply/BAT*')
 
         if batteries:
-            power_levels = set()
+            power_levels = []
             for battery in batteries:
                 full = readint(f'{battery}/energy_full')
                 now = readint(f'{battery}/energy_now')
                 power = ((100 / full) * now)
-                power_levels.add(power)
+                power_levels.append(power)
 
         percent = int(sum(power_levels) / len(batteries))
 
@@ -375,7 +373,7 @@ def battery_percentage() -> str:
 
 
 battery = Segment(
-    source=battery_percentage,
+    source=battery_source,
     label='bat',
     sleep_ms=10000,
     weight=90,
