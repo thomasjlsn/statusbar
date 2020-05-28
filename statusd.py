@@ -41,24 +41,32 @@ def readint(file):
     return val
 
 
-# Assign unicode bars to percentages to make meters.
-meter = {0: '    '}
+def make_meter(meter_width):
+    # Assign unicode bars to percentages to make meters.
+    meter = {0: ' ' * meter_width}
+    bar_chars = []
+    cell_chars = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█']
+    full = cell_chars[-1]
 
-# meter_ = [' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█']
-meter_ = [
-    '▏   ', '▎   ', '▍   ', '▌   ', '▋   ', '▊   ', '▉   ', '█   ',
-    '█▏  ', '█▎  ', '█▍  ', '█▌  ', '█▋  ', '█▊  ', '█▉  ', '██  ',
-    '██▏ ', '██▎ ', '██▍ ', '██▌ ', '██▋ ', '██▊ ', '██▉ ', '███ ',
-    '███▏', '███▎', '███▍', '███▌', '███▋', '███▊', '███▉', '████',
-]
+    fill = ''
+    for _ in range(meter_width):
+        for char in cell_chars:
+            bar = fill + char
+            bar_chars.append(bar.ljust(meter_width))
+        fill += full
 
-for percent in range(1, 101):
-    end = 0
-    for i, icon in enumerate(meter_):
-        start = end
-        end = (100 / len(meter_)) * i
-        if start < percent > end:
-            meter[percent] = meter_[i]
+    for percent in range(1, 101):
+        end = 0
+        for i, char in enumerate(bar_chars):
+            start = end
+            end = (100 / len(bar_chars)) * i
+            if start < percent > end:
+                meter[percent] = bar_chars[i]
+
+    return meter
+
+
+meter = make_meter(6)
 
 
 def fancy_meter(percentage=None, current=None, maximum=None):
