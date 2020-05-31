@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """A Server producing the status bar."""
 
-import uuid
 import logging
 from math import floor, log
 import os
@@ -42,6 +41,18 @@ def readint(file):
         val = int(f.readline())
 
     return val
+
+
+def readstr(file):
+    """Counterpart to readint()."""
+    with open(file, 'r') as f:
+        val = str(f.readline()).strip()
+
+    return val
+
+
+def uuid():
+    return readstr('/proc/sys/kernel/random/uuid')
 
 
 def make_meter(meter_width):
@@ -123,7 +134,7 @@ class Component(SharedData):
         self.weight = str(weight).zfill(8)
 
         # Unique key to store data
-        self.uuid = f'{self.weight}{uuid.uuid4()}'
+        self.uuid = f'{self.weight}-{uuid()}'
 
     def update(self):
         component = self.source()
