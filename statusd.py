@@ -2,6 +2,7 @@
 """A Server producing the status bar."""
 
 import logging
+from math import floor, log
 import os
 import socket
 import time
@@ -79,23 +80,37 @@ def fancy_meter(percentage=None, current=None, maximum=None):
     return meter[int(val)]
 
 
-# ==========================================================================
-# Classes making up the status bar.
+def bytes_to_largest_units(size_in_bytes):
+    if size_in_bytes == 0:
+        return '0B'
+
+    units = ('B', 'K', 'M', 'G', 'T', 'P')
+
+    i = int(floor(log(size_in_bytes, 1024)))
+    p = pow(1024, i)
+    s = round(size_in_bytes / p, 2)
+
+    return '%s%s' % (s, units[i])
+
+
 # ==========================================================================
 
 class SharedData:
     data = {}
 
 
-class Component(SharedData):
-    def __init__(self, source=None, sink=None, label=None,
-                 sleep_ms=1000, weight=0):
+class Network:
+    interfaces = [d for d in os.listdir('/sys/class/net/') if d != 'lo']
+    traffic = (0, 0)
 
+
+network = Network()
+
+
+class Component(SharedData):
+    def __init__(self, source=None, label=None, sleep_ms=1000, weight=0):
         # The function data is recieved from
         self.source = source
-
-        # The function data is sent to
-        self.sink = sink
 
         # An optional label for the component
         self.label = label
@@ -114,10 +129,6 @@ class Component(SharedData):
             else:
                 self.data[self.weight] = component
 
-    def out(self):
-        if self.sink is not None:
-            self.sink(self.data[self.weight])
-
     def sleep(self):
         if laptop_open():
             time.sleep(self.sleep_ms / 1000)
@@ -128,7 +139,6 @@ class Component(SharedData):
     def run(self):
         while True:
             self.update()
-            self.out()
             self.sleep()
             if teardown.is_set():
                 break
@@ -165,19 +175,6 @@ class Segment(Component):
 
 
 # ==========================================================================
-# Various sink funcions for the statusbar.
-# ==========================================================================
-
-def dwm(data):
-    os.system(f'xsetroot -name "{data}"')
-
-
-def tmp(data):
-    with open('/tmp/status_bar', 'w') as f:
-        f.write(data)
-
-
-# ==========================================================================
 #  Main status bar function.
 # ==========================================================================
 
@@ -197,7 +194,6 @@ def make_bar():
 
 status_bar = StatusBar(
     source=make_bar,
-    sink=tmp,
     sleep_ms=200,
 )
 
@@ -288,12 +284,13 @@ ram = Segment(
 # Active network interfaces
 # ==========================================================================
 
+
+
 def interfaces():
     """Returns state of network interfaces"""
-    interfaces = [d for d in os.listdir('/sys/class/net/') if d != 'lo']
     up = []
 
-    for interface in interfaces:
+    for interface in network.interfaces:
         with open(f'/sys/class/net/{interface}/operstate', 'r') as s:
             if s.readline().strip() == 'up':
                 up.append(interface)
@@ -308,10 +305,41 @@ def interfaces():
 
 net = Segment(
     source=interfaces,
+    label='net',
     sleep_ms=1000,
     weight=10,
 )
 
+
+# ==========================================================================
+# Network usage.
+# ==========================================================================
+
+def net_usage():
+    tx_bytes, rx_bytes = 0, 0
+
+    for interface in network.interfaces:
+        tx_bytes += readint(f'/sys/class/net/{interface}/statistics/tx_bytes')
+        rx_bytes += readint(f'/sys/class/net/{interface}/statistics/rx_bytes')
+
+    tx_old, rx_old = network.traffic
+
+    tx_rate = (tx_bytes - tx_old)
+    rx_rate = (rx_bytes - rx_old)
+
+    network.traffic = (tx_bytes, rx_bytes)
+
+    return ' '.join([
+        f'↑ {bytes_to_largest_units(tx_rate)}',
+        f'↓ {bytes_to_largest_units(rx_rate)}',
+    ])
+
+
+traffic = Segment(
+    source=net_usage,
+    sleep_ms=1000,
+    weight=5,
+)
 
 # ==========================================================================
 # Backlight level percentage.
@@ -324,10 +352,9 @@ except (FileNotFoundError, IndexError):
 
 
 def backlight_percentage() -> str:
-    return None
     try:
         bl_now = readint(glob('/sys/class/backlight/*/brightness')[0])
-        return f'{int((100 / bl_max) * bl_now)}%'
+        return fancy_meter(maximum=bl_max, current=bl_now)
     except FileNotFoundError:
         return None
 
@@ -335,7 +362,7 @@ def backlight_percentage() -> str:
 backlight = Segment(
     source=backlight_percentage,
     label='bl',
-    sleep_ms=5000,
+    sleep_ms=500,
     weight=95,
 )
 
@@ -389,7 +416,16 @@ if __name__ == '__main__':
     target_threads = [status_bar]
 
     # Optional threads
-    target_threads += [battery, backlight, clock, cpu, disk, net, ram]
+    target_threads += [
+        # backlight,
+        battery,
+        clock,
+        cpu,
+        disk,
+        net,
+        ram,
+        traffic,
+    ]
 
     threads = [Thread(target=thread.run) for thread in target_threads]
 
