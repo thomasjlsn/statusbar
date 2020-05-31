@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """A Server producing the status bar."""
 
+import uuid
 import logging
 from math import floor, log
 import os
@@ -115,19 +116,22 @@ class Component(SharedData):
         # An optional label for the component
         self.label = label
 
-        # Time in ms to sleep, between 0.5 ... 10 seconds
+        # Time in ms to sleep, between 0.5 ... 20 seconds
         self.sleep_ms = max(500, min(20000, sleep_ms))
 
         # Used to determine order of components
-        self.weight = weight
+        self.weight = str(weight).zfill(8)
+
+        # Unique key to store data
+        self.uuid = f'{self.weight}{uuid.uuid4()}'
 
     def update(self):
         component = self.source()
         if component is not None:
             if self.label is not None:
-                self.data[self.weight] = f'{self.label.upper()}: {component}'
+                self.data[self.uuid] = f'{self.label.upper()}: {component}'
             else:
-                self.data[self.weight] = component
+                self.data[self.uuid] = component
 
     def sleep(self):
         if laptop_open():
@@ -212,7 +216,7 @@ def time_now():
 clock = Segment(
     source=time_now,
     sleep_ms=250,
-    weight=100,
+    weight=99,
 )
 
 
