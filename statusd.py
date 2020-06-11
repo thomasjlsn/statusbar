@@ -314,7 +314,7 @@ def interfaces():
         return 'offline'
 
     if int(strftime('%S')[0]) % 2 == 0:
-        return os.popen('hostname -I').readline().split()[0]
+        return os.popen('ip route get 1.1.1.1').readlines()[0].split()[6]
     return ' '.join(up)
 
 
