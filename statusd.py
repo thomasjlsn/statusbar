@@ -7,6 +7,7 @@ import os
 import socket
 import time
 from glob import glob
+from itertools import cycle
 from threading import Event, Thread
 from time import strftime
 
@@ -111,11 +112,24 @@ class SharedData:
     data = {}
 
 
+class Block_Devices:
+    disks = cycle([
+        line.split()[0] for line in [
+            drive.strip() for drive in
+            os.popen('df').readlines() if drive.startswith('/dev/sd')
+        ]
+    ])
+
+    def next(self):
+        return(next(self.disks))
+
+
 class Network:
     interfaces = [d for d in os.listdir('/sys/class/net/') if d != 'lo']
     traffic = (0, 0)
 
 
+disks = Block_Devices()
 network = Network()
 
 
@@ -235,21 +249,25 @@ clock = Segment(
 # Disk usage.
 # ==========================================================================
 
-def disk_label():
-    if readint('/sys/block/sda/queue/rotational'):
-        return 'hdd'
-    return 'ssd'
+# def disk_label():
+    # if readint('/sys/block/sda/queue/rotational'):
+        # return 'hdd'
+    # return 'ssd'
 
 
 def disk_usage():
-    return fancy_meter(int(
-        os.popen('df /dev/sda1 --output=pcent').readlines()[1].strip()[:-1]
+    disk = disks.next()
+
+    label = f'{disk.split("/")[-1:][0].upper()}: '
+
+    return label + fancy_meter(int(
+        os.popen(f'df {disk} --output=pcent').readlines()[1].strip()[:-1]
     ))
 
 
 disk = Segment(
     source=disk_usage,
-    label=disk_label(),
+    # label=disk_label(),
     sleep_ms=20000,
     weight=85,
 )
@@ -298,8 +316,6 @@ ram = Segment(
 # ==========================================================================
 # Active network interfaces
 # ==========================================================================
-
-
 
 def interfaces():
     """Returns state of network interfaces"""
@@ -437,7 +453,7 @@ if __name__ == '__main__':
         clock,
         cpu,
         disk,
-        net,
+        # net,
         ram,
         traffic,
     ]
