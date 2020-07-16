@@ -167,10 +167,23 @@ class Component(SharedData):
 
     def run(self):
         while True:
-            self.update()
-            self.sleep()
-            if teardown.is_set():
+            try:
+                self.update()
+                self.sleep()
+
+            except Exception as e:
+                # Display the error briefly
+                self.data[self.uuid] = f'ERROR: "{e}"'
+                time.sleep(10)
+
+                # Set data to None, effectively removing the component,
+                # allowing the status bar to continue running without it.
+                self.data[self.uuid] = None
                 break
+
+            finally:
+                if teardown.is_set():
+                    break
 
 
 class StatusBar(Component):
