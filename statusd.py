@@ -420,7 +420,9 @@ def battery_source() -> str:
     try:
         batteries = glob('/sys/class/power_supply/BAT*')
 
-        if batteries:
+        if not batteries:
+            return None
+        else:
             power_levels = []
             for battery in batteries:
                 full = readint(f'{battery}/energy_full')
