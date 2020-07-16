@@ -2,12 +2,12 @@
 """A Server producing the status bar."""
 
 import logging
-from math import floor, log
 import os
 import socket
 import time
 from glob import glob
 from itertools import cycle
+from math import floor, log
 from threading import Event, Thread
 from time import strftime
 
