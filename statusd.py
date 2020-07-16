@@ -81,7 +81,7 @@ def make_meter(meter_width):
     return meter
 
 
-meter = make_meter(6)
+meter = make_meter(10)
 
 
 def fancy_meter(percentage=None, current=None, maximum=None):
