@@ -116,7 +116,7 @@ class Block_Devices:
     disks = cycle([
         line.split()[0] for line in [
             drive.strip() for drive in
-            os.popen('df').readlines() if drive.startswith('/dev/sd')
+            os.popen('df').readlines() if drive.startswith('/dev/sda')
         ]
     ])
 
