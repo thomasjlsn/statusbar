@@ -2,4 +2,4 @@
 
 OS="$(cat /etc/*release | awk -F '=' '/^ID=/ {print $2}')"
 
-cp -fv "service_files/statusd.service.$OS" "service_files/statusd.service" || exit 1
+{ sh "service_files/statusd.service.$OS" || exit 1; } > "service_files/statusd.service"

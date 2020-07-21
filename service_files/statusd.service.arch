@@ -1,4 +1,4 @@
-[Unit]
+printf '%s' "[Unit]
 Description=statusbar server for tmux and similar
 Wants=network-online.target
 After=network-online.target
@@ -6,10 +6,11 @@ Requires=NetworkManager.service
 PartOf=NetworkManager.service
 
 [Service]
-ExecStart=/usr/bin/statusd
+ExecStart=$(which statusd)
 Restart=always
 User=root
 Group=root
 
 [Install]
 WantedBy=multi-user.target
+"
