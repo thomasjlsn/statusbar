@@ -53,11 +53,12 @@ def readstr(file):
 
 
 def uuid():
+    """Get a uuid from the kernel."""
     return readstr('/proc/sys/kernel/random/uuid')
 
 
 def make_meter(meter_width):
-    # Assign unicode bars to percentages to make meters.
+    """Assign unicode bars to percentages to make meters."""
     meter = {0: ' ' * meter_width}
     bar_chars = []
     cell_chars = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█']
@@ -248,7 +249,7 @@ status_bar = StatusBar(
 # ==========================================================================
 
 def time_now():
-    return time.strftime('%a %d %H:%M')
+    return time.strftime('%a, %b %d %H:%M')
 
 
 clock = Segment(
