@@ -3,11 +3,12 @@
 
 import logging
 import os
-import socket
 import time
 from glob import glob
 from itertools import cycle
 from math import floor, log
+from socket import AF_UNIX, SOCK_STREAM, socket
+from stat import S_ISSOCK
 from threading import Event, Thread
 from time import strftime
 
@@ -190,10 +191,19 @@ class Component(SharedData):
 class StatusBar(Component):
     """The status bar as a whole. Needs its own unique dataset."""
     data = ''
+    uds = '/tmp/statusd.sock'
 
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind((socket.gethostname(), 8787))
+    # Remove the old socket if there is one
+    try:
+        is_socket = S_ISSOCK(os.stat(uds).st_mode)
+        if os.path.exists(uds) or is_socket:
+            os.remove(uds)
+    except FileNotFoundError:
+        pass
+
+    server = socket(AF_UNIX, SOCK_STREAM)
+    server.bind(uds)
+    os.chmod(uds, 0o722)  # Reduce permissions to minimum needed
     server.listen(5)
 
     def update(self):

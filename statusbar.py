@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """A client recieving the status bar."""
 
-import socket
+from socket import AF_UNIX, SOCK_STREAM, socket
+from sys import stderr, stdout
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((socket.gethostname(), 8787))
-
-print(client.recv(1024).decode('utf-8'))
+try:
+    client = socket(AF_UNIX, SOCK_STREAM)
+    client.connect('/tmp/statusd.sock')
+    stdout.write(client.recv(1024).decode('utf-8'))
+except ConnectionRefusedError:
+    stderr.write('server is not running\n')
+finally:
+    client.close()
