@@ -1,5 +1,32 @@
 #!/usr/bin/env bash
 
-OS="$(cat /etc/*release | awk -F '=' '/^ID=/ {print $2}')"
+function installed {
+  2>/dev/null 1>&2 command -v "${1?}"
+}
 
-{ sh "service_files/statusd.service.$OS" || exit 1; } > "service_files/statusd.service"
+if installed 'network-manager'; then
+  NM='network-manager'
+elif installed 'NetworkManager'; then
+  NM='NetworkManager'
+else
+  2>/dev/null echo 'no network manager installed'
+  exit 1
+fi
+
+cat << EOF > "statusd.service"
+[Unit]
+Description=statusbar server for tmux and similar
+Wants=network-online.target
+After=network-online.target
+Requires=$NM.service
+PartOf=$NM.service
+
+[Service]
+ExecStart=$(which statusd)
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+EOF

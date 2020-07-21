@@ -13,9 +13,9 @@ from time import strftime
 
 import psutil
 
-from lib.helpers import (bytes_to_largest_units, laptop_open, readint,
+from statusdlib.helpers import (bytes_to_largest_units, laptop_open, readint,
                              readstr, uuid)
-from lib.ui import fancy_meter
+from statusdlib.ui import fancy_meter
 
 # Kill all threads in the status_bar
 teardown = Event()

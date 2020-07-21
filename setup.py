@@ -5,6 +5,6 @@ from setuptools import setup
 setup(
     name='statusd',
     version='0.0',
-    packages=['lib'],
+    packages=['statusdlib'],
     scripts=['statusd', 'statusbar'],
 )

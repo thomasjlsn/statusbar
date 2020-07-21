@@ -8,7 +8,7 @@ enable-service:
 	#
 	# Setting up systemd service.
 	#
-	@cp -fv service_files/statusd.service /etc/systemd/system/statusd.service
+	@cp -fv statusd.service /etc/systemd/system/statusd.service
 	@systemctl start statusd.service
 	@systemctl enable statusd.service
 	@make reload
