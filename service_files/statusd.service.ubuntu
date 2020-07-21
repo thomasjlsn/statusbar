@@ -6,7 +6,7 @@ Requires=network-manager.service
 PartOf=network-manager.service
 
 [Service]
-ExecStart=/usr/local/bin/statusd
+ExecStart=/usr/bin/statusd
 Restart=always
 User=root
 Group=root

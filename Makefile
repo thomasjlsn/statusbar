@@ -1,14 +1,12 @@
-PREFIX ?= /usr/local
-
 install:
-	@cp -fv statusd.py $(PREFIX)/bin/statusd
-	@chmod -v 555 $(PREFIX)/bin/statusd
-	@cp -fv statusbar.py $(PREFIX)/bin/statusbar
-	@chmod -v 555 $(PREFIX)/bin/statusbar
-	@cp -fv statusd.service /etc/systemd/system/statusd.service
+	@pip install .
+	@cp -fv service_files/statusd.service /etc/systemd/system/statusd.service
 	@systemctl start statusd.service
 	@systemctl enable statusd.service
 	@make reload
+
+uninstall:
+	@pip uninstall statusd
 
 reload:
 	#

@@ -6,7 +6,6 @@ import os
 import time
 from glob import glob
 from itertools import cycle
-from math import floor, log
 from socket import AF_UNIX, SOCK_STREAM, socket
 from stat import S_ISSOCK
 from threading import Event, Thread
@@ -14,101 +13,13 @@ from time import strftime
 
 import psutil
 
+from lib.helpers import (bytes_to_largest_units, laptop_open, readint,
+                             readstr, uuid)
+from lib.ui import fancy_meter
+
 # Kill all threads in the status_bar
 teardown = Event()
 
-
-# ==========================================================================
-# Helper functions.
-# ==========================================================================
-
-def laptop_open():
-    """Check if laptop lid is open."""
-    try:
-        with open('/proc/acpi/button/lid/LID/state', 'r') as f:
-            state = f.readline().split()[1]
-        if state.lower() == 'open':
-            return True
-        return False
-    except FileNotFoundError:
-        return True
-
-
-def readint(file):
-    """
-    Many files in /sys/* and /proc/* contain single integer values.
-    This reduces boilerplate.
-    """
-    with open(file, 'r') as f:
-        val = int(f.readline())
-
-    return val
-
-
-def readstr(file):
-    """Counterpart to readint()."""
-    with open(file, 'r') as f:
-        val = str(f.readline()).strip()
-
-    return val
-
-
-def uuid():
-    """Get a uuid from the kernel."""
-    return readstr('/proc/sys/kernel/random/uuid')
-
-
-def make_meter(meter_width):
-    """Assign unicode bars to percentages to make meters."""
-    meter = {0: ' ' * meter_width}
-    bar_chars = []
-    cell_chars = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█']
-    full = cell_chars[-1]
-
-    fill = ''
-    for _ in range(meter_width):
-        for char in cell_chars:
-            bar = fill + char
-            bar_chars.append(bar.ljust(meter_width))
-        fill += full
-
-    for percent in range(1, 101):
-        end = 0
-        for i, char in enumerate(bar_chars):
-            start = end
-            end = (100 / len(bar_chars)) * i
-            if start < percent > end:
-                meter[percent] = bar_chars[i]
-
-    return meter
-
-
-meter = make_meter(10)
-
-
-def fancy_meter(percentage=None, current=None, maximum=None):
-    if percentage is None:
-        val = ((100 / maximum) * current)
-    else:
-        val = percentage
-
-    return meter[int(val)]
-
-
-def bytes_to_largest_units(size_in_bytes):
-    if size_in_bytes == 0:
-        return '0B'
-
-    units = ('B', 'K', 'M', 'G', 'T', 'P')
-
-    i = int(floor(log(size_in_bytes, 1024)))
-    p = pow(1024, i)
-    s = round(size_in_bytes / p, 2)
-
-    return '%s%s' % (s, units[i])
-
-
-# ==========================================================================
 
 class SharedData:
     data = {}
