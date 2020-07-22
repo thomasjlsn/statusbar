@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Various helper functions."""
 
 from math import floor, log
