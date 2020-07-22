@@ -50,3 +50,4 @@ def readstr(file):
 
 def uuid():
     """Get a uuid from the kernel."""
+    return readstr('/proc/sys/kernel/random/uuid')
