@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Active network interfaces"""
 
 import os
 
@@ -14,9 +15,6 @@ class Network:
 network = Network()
 
 
-# ==========================================================================
-# Active network interfaces
-# ==========================================================================
 
 def interfaces():
     """Returns state of network interfaces"""
@@ -43,9 +41,7 @@ operstate = Segment(
 )
 
 
-# ==========================================================================
-# Network usage.
-# ==========================================================================
+"""Network usage."""
 
 def net_usage():
     tx_bytes, rx_bytes = 0, 0

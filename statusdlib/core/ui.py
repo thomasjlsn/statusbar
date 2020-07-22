@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-
+"""Functions that make a unicode meter for the statusbar."""
 
 def make_meter_values(meter_width):
-    """Assign unicode bars to percentages to make meters."""
+    """Assign unicode bars to percentages."""
     meter = {0: ' ' * meter_width}
     bar_chars = []
     cell_chars = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█']
@@ -30,6 +30,14 @@ meter_values = make_meter_values(10)
 
 
 def meter(percentage=None, current=None, maximum=None):
+    """
+    A Unicode 'meter'.
+
+    A meter needs either:
+        * a percentage
+        * the current and maximum values
+
+    """
     if percentage is None:
         val = ((100 / maximum) * current)
     else:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Disk usage."""
 
 import os
 from itertools import cycle
@@ -22,9 +23,6 @@ class Block_Devices:
 disks = Block_Devices()
 
 
-# ==========================================================================
-# Disk usage.
-# ==========================================================================
 
 def disk_usage():
     disk = disks.next()

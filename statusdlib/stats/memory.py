@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
+"""Memory usage."""
 
 import psutil
 from statusdlib.core.components import Segment
 from statusdlib.core.ui import meter
 
-# ==========================================================================
-# Memory usage.
-# ==========================================================================
 
 def memory_usage():
     """Memory displayed in largest unit."""

@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
+"""Backlight level percentage."""
 
 from glob import glob
 
 from statusdlib.core.components import Segment
 from statusdlib.helpers import readint
-
-# ==========================================================================
-# Backlight level percentage.
-# ==========================================================================
 
 try:
     bl_max = readint(glob('/sys/class/backlight/*/max_brightness')[0])

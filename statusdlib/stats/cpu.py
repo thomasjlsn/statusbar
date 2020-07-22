@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
+"""CPU usage in percentage."""
 
 import psutil
 from statusdlib.core.components import Segment
 from statusdlib.core.ui import meter
 
-# ==========================================================================
-# CPU usage in percentage.
-# ==========================================================================
 
 def cpu_percent():
     usage = psutil.cpu_percent()

@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
+"""A Clock."""
 
 from time import strftime
 
 from statusdlib.core.components import Segment
 
-# ==========================================================================
-# A Clock.
-# ==========================================================================
 
 def time_now():
     return strftime('%a, %b %d %H:%M')

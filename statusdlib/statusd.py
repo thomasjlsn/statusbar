@@ -3,18 +3,19 @@
 
 from threading import Event, Thread
 
-from statusdlib.core.components import Segment, statusbar
+from statusdlib.core.components import Segment
+from statusdlib.core.server import statusbar
 from statusdlib.core.ui import meter
 from statusdlib.helpers import (bytes_to_largest_units, laptop_open, readint,
                                 readstr, uuid)
 from statusdlib.stats import (backlight, battery, cpu, date, disks, memory,
                               network)
 
-# Kill all threads in the statusbar
-teardown = Event()
-
 
 def main():
+    # Kill all threads in the statusbar
+    teardown = Event()
+
     # Main thread
     target_threads = [statusbar]
 

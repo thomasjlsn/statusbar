@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
+"""
+'Components' are the main abstraction used in statusd.
 
-import logging
-import os
+A Component is any part of the statusbar that:
+    * has a source of data (a function that returns a string)
+    * has access to SharedData
+    * sleeps for some period of time
+
+"""
+
 import time
-from socket import AF_UNIX, SOCK_STREAM, socket
-from stat import S_ISSOCK
 
+from statusdlib.core.data import SharedData
 from statusdlib.helpers import laptop_open, uuid
-
-
-class SharedData:
-    data = {}
 
 
 class Component(SharedData):
@@ -61,69 +63,7 @@ class Component(SharedData):
                 self.data[self.uuid] = None
                 break
 
-            # finally:
-                # if teardown.is_set():
-                    # break
-
-
-class StatusBar(Component):
-    """The status bar as a whole. Needs its own unique dataset."""
-    data = ''
-    uds = '/tmp/statusd.sock'
-
-    # Remove the old socket if there is one
-    try:
-        is_socket = S_ISSOCK(os.stat(uds).st_mode)
-        if os.path.exists(uds) or is_socket:
-            os.remove(uds)
-    except FileNotFoundError:
-        pass
-
-    server = socket(AF_UNIX, SOCK_STREAM)
-    server.bind(uds)
-    os.chmod(uds, 0o722)  # Reduce permissions to minimum needed
-    server.listen(5)
-
-    def update(self):
-        self.data = self.source()
-
-    def run(self):
-        try:
-            while True:
-                client, address = self.server.accept()
-                self.update()
-                logging.info(f'connection from: {address}')
-                client.send(bytes(self.data, 'utf-8'))
-                # if teardown.is_set():
-                    # break
-        finally:
-            self.server.close()
-
 
 class Segment(Component):
     """One segment of the status bar."""
     pass
-
-
-# ==========================================================================
-#  Main status bar function.
-# ==========================================================================
-
-lpad = ' '
-rpad = ' '
-
-
-def make_bar():
-    return ''.join([
-        ''.join([
-            lpad, str(SharedData.data[component]), rpad
-        ])
-        for component in sorted(SharedData.data.keys())
-        if SharedData.data[component] is not None
-    ])
-
-
-statusbar = StatusBar(
-    source=make_bar,
-    sleep_ms=200,
-)

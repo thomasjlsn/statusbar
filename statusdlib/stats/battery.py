@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Current battery percentage."""
 
 from glob import glob
 
@@ -6,9 +7,6 @@ from statusdlib.core.components import Segment
 from statusdlib.core.ui import meter
 from statusdlib.helpers import readint
 
-# ==========================================================================
-# Current battery percentage.
-# ==========================================================================
 
 def battery_source() -> str:
     """Returns current battery percentage"""

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""A simple client that recieves data from statusd."""
 
 from socket import AF_UNIX, SOCK_STREAM, socket
 from sys import stderr, stdout
