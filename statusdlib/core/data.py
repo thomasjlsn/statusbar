@@ -2,4 +2,4 @@
 """Data that can be shared between Components."""
 
 class SharedData:
-    data = {}
+    shared_data = {}

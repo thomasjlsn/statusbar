@@ -3,7 +3,8 @@
 
 from glob import glob
 
-from statusdlib.core.components import Segment
+from statusdlib.core.components import Component
+from statusdlib.core.ui import meter
 from statusdlib.helpers import readint
 
 try:
@@ -20,7 +21,7 @@ def backlight_percentage() -> str:
         return None
 
 
-backlight = Segment(
+level = Component(
     source=backlight_percentage,
     label='bl',
     sleep_ms=500,

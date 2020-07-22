@@ -4,7 +4,7 @@ a simple statusbar for dwm, tmux, etc.
 
 ## The problem
 
-I wrote a sript that populates my tmux statusbar. Now, if I have 10 tmux
+I wrote a script that populates my tmux statusbar. Now, if I have 10 tmux
 sessions in the background, I have 10 statusbar scripts running too.
 
 

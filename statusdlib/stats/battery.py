@@ -3,7 +3,7 @@
 
 from glob import glob
 
-from statusdlib.core.components import Segment
+from statusdlib.core.components import Component
 from statusdlib.core.ui import meter
 from statusdlib.helpers import readint
 
@@ -38,7 +38,7 @@ def battery_source() -> str:
         return None
 
 
-life = Segment(
+life = Component(
     source=battery_source,
     label='bat',
     sleep_ms=10000,

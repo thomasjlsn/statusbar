@@ -1,4 +1,4 @@
-all: root clean install
+all: root install
 
 # ==========================================================================
 # User level rules:
@@ -8,12 +8,6 @@ all: root clean install
 #     uninstall  uninstall statusd
 #
 # ==========================================================================
-
-clean: root uninstall
-	rm -fv statusd.service ||:
-	#
-	# Restored to clean state.
-	#
 
 install: root pip-install enable-service reload
 	#

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Memory usage."""
 
-import psutil
-from statusdlib.core.components import Segment
+from psutil import virtual_memory
+from statusdlib.core.components import Component
 from statusdlib.core.ui import meter
 
 
 def memory_usage():
     """Memory displayed in largest unit."""
-    mem = psutil.virtual_memory()._asdict()
+    mem = virtual_memory()._asdict()
 
     return meter(
         current=mem['used'],
@@ -16,7 +16,7 @@ def memory_usage():
     )
 
 
-usage = Segment(
+usage = Component(
     source=memory_usage,
     label='ram',
     sleep_ms=500,

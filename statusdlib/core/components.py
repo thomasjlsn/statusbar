@@ -9,7 +9,7 @@ A Component is any part of the statusbar that:
 
 """
 
-import time
+from time import sleep
 
 from statusdlib.core.data import SharedData
 from statusdlib.helpers import laptop_open, uuid
@@ -36,16 +36,16 @@ class Component(SharedData):
         component = self.source()
         if component is not None:
             if self.label is not None:
-                self.data[self.uuid] = f'{self.label.upper()}: {component}'
+                self.shared_data[self.uuid] = f'{self.label.upper()}: {component}'
             else:
-                self.data[self.uuid] = component
+                self.shared_data[self.uuid] = component
 
     def sleep(self):
         if laptop_open():
-            time.sleep(self.sleep_ms / 1000)
+            sleep(self.sleep_ms / 1000)
         else:
             # Sleep longer.
-            time.sleep((self.sleep_ms * 3) / 1000)
+            sleep((self.sleep_ms * 3) / 1000)
 
     def run(self):
         while True:
@@ -55,15 +55,10 @@ class Component(SharedData):
 
             except Exception as e:
                 # Display the error briefly
-                self.data[self.uuid] = f'ERROR: "{e}"'
-                time.sleep(10)
+                self.shared_data[self.uuid] = f'ERROR: "{e}"'
+                sleep(10)
 
                 # Set data to None, effectively removing the component,
                 # allowing the status bar to continue running without it.
-                self.data[self.uuid] = None
+                self.shared_data[self.uuid] = None
                 break
-
-
-class Segment(Component):
-    """One segment of the status bar."""
-    pass
