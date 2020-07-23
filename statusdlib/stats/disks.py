@@ -2,6 +2,7 @@
 """Disk usage."""
 
 from os import path, statvfs
+from os.path import basename, exists, islink, realpath
 
 from statusdlib.core.components import Component
 from statusdlib.core.ui import meter
@@ -9,9 +10,9 @@ from statusdlib.core.ui import meter
 
 class Block_Devices:
     mntfile = '/proc/mounts'
-    if path.exists(mntfile):
-        if path.islink(mntfile):
-            mntfile = path.realpath(mntfile)
+    if exists(mntfile):
+        if islink(mntfile):
+            mntfile = realpath(mntfile)
 
     def mounted(self):
         with open(self.mntfile) as mnt:
@@ -50,7 +51,7 @@ def size_of(mountpoint):
 def disk_usage():
     disk = disks.next()
 
-    label = path.basename(disk[0]).upper()
+    label = basename(disk[0]).upper()
     mountpoint = disk[1]
 
     size, free = size_of(mountpoint)
