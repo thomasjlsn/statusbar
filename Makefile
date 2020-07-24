@@ -9,6 +9,12 @@ all: root install
 #
 # ==========================================================================
 
+clean:
+	rm -fv statusd.service ||:
+	#
+	# Restored to clean state.
+	#
+
 install: root pip-install enable-service reload
 	#
 	# Installed statusd.

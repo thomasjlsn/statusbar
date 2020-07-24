@@ -9,7 +9,7 @@ cat << EOF > "statusd.service"
 Description=statusbar server for tmux and similar
 
 [Service]
-ExecStart=$(which statusd) -bcCdmn
+ExecStart=$(which statusd) -bcCdmn -w 10
 Restart=always
 User=root
 Group=root

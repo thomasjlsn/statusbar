@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Functions that make a unicode meter for the statusbar."""
 
+from statusdlib.core.data import SharedData
+
+
 def make_meter_values(meter_width):
     """Assign unicode bars to percentages."""
     meter = {0: ' ' * meter_width}
@@ -26,7 +29,7 @@ def make_meter_values(meter_width):
     return meter
 
 
-meter_values = make_meter_values(10)
+meter_values = make_meter_values(int(SharedData.args.width))
 
 
 def meter(percentage=None, current=None, maximum=None):

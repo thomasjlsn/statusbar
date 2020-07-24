@@ -1,19 +1,7 @@
 #!/usr/bin/env python3
 """Main entrypoint to statusd."""
 
-from argparse import ArgumentParser
-
-argparser = ArgumentParser()
-
-argparser.add_argument('-b', '--battery',    dest='battery',   action='store_true', help='battery percentage')
-argparser.add_argument('-B', '--backlight',  dest='backlight', action='store_true', help='screen backlighting')
-argparser.add_argument('-c', '--clock',      dest='clock',     action='store_true', help='a clock')
-argparser.add_argument('-C', '--cpu',        dest='cpu',       action='store_true', help='cpu percentage')
-argparser.add_argument('-d', '--disk-usage', dest='disks',     action='store_true', help='disk usage')
-argparser.add_argument('-m', '--memory',     dest='mem',       action='store_true', help='memory usage')
-argparser.add_argument('-n', '--net-usage',  dest='net',       action='store_true', help='network usage')
-
-args = argparser.parse_args()
+from statusdlib.core.data import SharedData
 
 
 def main():
@@ -29,13 +17,13 @@ def main():
     target_threads = [statusbar]
 
     # Optional threads
-    if args.battery:   target_threads += [battery.life]
-    if args.backlight: target_threads += [backlight.level]
-    if args.clock:     target_threads += [date.clock]
-    if args.cpu:       target_threads += [cpu.usage]
-    if args.disks:     target_threads += [disks.usage]
-    if args.mem:       target_threads += [memory.usage]
-    if args.net:       target_threads += [network.usage]
+    if SharedData.args.battery:   target_threads += [battery.life]
+    if SharedData.args.backlight: target_threads += [backlight.level]
+    if SharedData.args.clock:     target_threads += [date.clock]
+    if SharedData.args.cpu:       target_threads += [cpu.usage]
+    if SharedData.args.disks:     target_threads += [disks.usage]
+    if SharedData.args.mem:       target_threads += [memory.usage]
+    if SharedData.args.net:       target_threads += [network.usage]
 
     threads = [
         Thread(target=thread.run)
