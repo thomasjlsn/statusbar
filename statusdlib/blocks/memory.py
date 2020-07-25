@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Memory usage."""
 
-from statusdlib.core.components import Component
-from statusdlib.core.ui import meter
+from statusdlib.core.components import Block, meter
 
 
 def memory_usage():
@@ -34,9 +33,10 @@ def memory_usage():
     )
 
 
-usage = Component(
-    source=memory_usage,
-    label='ram',
-    sleep_ms=500,
-    weight=70,
-)
+def main():
+    return Block(
+        source=memory_usage,
+        label='ram',
+        sleep_ms=500,
+        weight=70,
+    )

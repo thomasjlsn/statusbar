@@ -4,8 +4,7 @@
 from os import path, statvfs
 from os.path import basename, exists, islink, realpath
 
-from statusdlib.core.components import Component
-from statusdlib.core.ui import meter
+from statusdlib.core.components import Block, meter
 
 
 class Block_Devices:
@@ -62,8 +61,9 @@ def disk_usage():
     )])
 
 
-usage = Component(
-    source=disk_usage,
-    sleep_ms=5000,
-    weight=85,
-)
+def main():
+    return Block(
+        source=disk_usage,
+        sleep_ms=5000,
+        weight=85,
+    )

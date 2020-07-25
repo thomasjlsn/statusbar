@@ -3,8 +3,7 @@
 
 from glob import glob
 
-from statusdlib.core.components import Component
-from statusdlib.core.ui import meter
+from statusdlib.core.components import Block, meter
 from statusdlib.helpers import readint
 
 
@@ -38,9 +37,10 @@ def battery_source() -> str:
         return None
 
 
-life = Component(
-    source=battery_source,
-    label='bat',
-    sleep_ms=10000,
-    weight=90,
-)
+def main():
+    return Block(
+        source=battery_source,
+        label='bat',
+        sleep_ms=10000,
+        weight=90,
+    )

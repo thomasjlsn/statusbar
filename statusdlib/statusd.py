@@ -9,26 +9,26 @@ def main():
     # runs --help, it will not require root or try to restart the server.
     from threading import Thread
 
-    from statusdlib.core.server import statusbar
-    from statusdlib.stats import (backlight, battery, cpu, date, disks,
-            memory, network)
+    from statusdlib.core.components import StatusBar
+    from statusdlib.blocks import (backlight, battery, cpu, date, disks,
+                                   memory, network)
+
+    targets = set()
 
     # Main thread
-    target_threads = [statusbar]
+    statusbar = StatusBar()
+    targets.add(statusbar)
 
     # Optional threads
-    if SharedData.args.battery:   target_threads += [battery.life]
-    if SharedData.args.backlight: target_threads += [backlight.level]
-    if SharedData.args.clock:     target_threads += [date.clock]
-    if SharedData.args.cpu:       target_threads += [cpu.usage]
-    if SharedData.args.disks:     target_threads += [disks.usage]
-    if SharedData.args.mem:       target_threads += [memory.usage]
-    if SharedData.args.net:       target_threads += [network.usage]
+    if SharedData.args.battery:   targets.add(battery.main())
+    if SharedData.args.backlight: targets.add(backlight.main())
+    if SharedData.args.clock:     targets.add(date.main())
+    if SharedData.args.cpu:       targets.add(cpu.main())
+    if SharedData.args.disks:     targets.add(disks.main())
+    if SharedData.args.mem:       targets.add(memory.main())
+    if SharedData.args.net:       targets.add(network.main())
 
-    threads = [
-        Thread(target=thread.run)
-        for thread in target_threads
-    ]
+    threads = [Thread(target=thread.run) for thread in targets]
 
     try:
         for thread in threads:
@@ -36,10 +36,8 @@ def main():
         for thread in threads:
             thread.join()
         return 0
-
     except KeyboardInterrupt:
         return 1
-
     finally:
         for thread in threads:
             thread.join()

@@ -3,7 +3,7 @@
 
 from os import listdir
 
-from statusdlib.core.components import Component
+from statusdlib.core.components import Block
 from statusdlib.helpers import bytes_to_largest_units, readint
 
 
@@ -15,7 +15,7 @@ class Network:
 network = Network()
 
 
-def net_usage():
+def usage():
     tx_bytes, rx_bytes = 0, 0
 
     for interface in network.interfaces:
@@ -35,8 +35,9 @@ def net_usage():
     ])
 
 
-usage = Component(
-    source=net_usage,
-    sleep_ms=1000,
-    weight=5,
-)
+def main():
+    return Block(
+        source=usage,
+        sleep_ms=1000,
+        weight=5,
+    )
