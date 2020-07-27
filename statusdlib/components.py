@@ -48,17 +48,17 @@ class Block(SharedData):
             else:
                 self.data[self.uuid] = value
 
-    def sleep(self):
-        sleep(self.sleep_ms / 1000)
+    def remove_block(self):
+        self.data.pop(self.uuid, None)
 
     def run(self):
         while True:
             try:
                 self.update()
-                self.sleep()
+                sleep(self.sleep_ms / 1000)
 
             except RemoveBlock:
-                self.data[self.uuid] = None
+                self.remove_block()
                 break
 
             except Exception as e:
@@ -75,7 +75,8 @@ class Block(SharedData):
 class StatusBar(SharedData):
     def active_blocks(self):
         return [
-            k for k in sorted(self.data.keys()) if self.data[k] is not None
+            block for block in sorted(self.data.keys())
+            if self.data[block] is not None
         ]
 
     def statusbar(self):
@@ -108,16 +109,20 @@ class Server(StatusBar):
         self.drop_permissions()
         self.server.listen(5)
 
-    def run(self):
-        self.start_server()
+    def accept_connections(self):
+        try:
+            client, address = self.server.accept()
+            client.send(bytes(self.statusbar(), 'utf-8'))
+        finally:
+            client.close()
 
-        while True:
-            try:
-                client, address = self.server.accept()
-                client.send(bytes(self.statusbar(), 'utf-8'))
-            finally:
-                client.close()
-        self.server.close()
+    def run(self):
+        try:
+            self.start_server()
+            while True:
+                self.accept_connections()
+        finally:
+            self.server.close()
 
 
 meter_values = make_meter_values(int(args.width))
