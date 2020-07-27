@@ -55,10 +55,7 @@ def disk_usage():
 
     size, free = size_of(mountpoint)
 
-    return ': '.join([label, meter(
-        current=(size - free),
-        maximum=size,
-    )])
+    return ': '.join([label, meter((100 / size) * (size - free))])
 
 
 def main():

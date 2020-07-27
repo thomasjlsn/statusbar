@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='statusd',
-    version='0.0',
+    version='0.1',
     packages=[
         'statusdlib',
         'statusdlib.blocks',

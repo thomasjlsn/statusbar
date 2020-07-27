@@ -28,8 +28,7 @@ def memory_usage():
 
     return meter(
         # memory usage as calculated by `free(1)`
-        current=(mem['MemTotal'] - mem['MemFree'] - mem['Buffers'] - mem['Cached']),
-        maximum=mem['MemTotal'],
+        (100 / mem['MemTotal']) * (mem['MemTotal'] - mem['MemFree'] - mem['Buffers'] - mem['Cached'])
     )
 
 

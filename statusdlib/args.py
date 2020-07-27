@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 
 argparser = ArgumentParser()
 
+argparser.add_argument('-a', '--abort',      dest='abort',     action='store_true', help='do not try to restart threads that die')
 argparser.add_argument('-b', '--battery',    dest='battery',   action='store_true', help='battery percentage')
 argparser.add_argument('-B', '--backlight',  dest='backlight', action='store_true', help='screen backlighting')
 argparser.add_argument('-c', '--clock',      dest='clock',     action='store_true', help='a clock')

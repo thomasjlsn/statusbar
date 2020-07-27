@@ -44,7 +44,6 @@ class Block(SharedData):
         if laptop_open():
             sleep(self.sleep_ms / 1000)
         else:
-            # Sleep longer.
             sleep((self.sleep_ms * 3) / 1000)
 
     def run(self):
@@ -58,69 +57,53 @@ class Block(SharedData):
                 self.data[self.uuid] = f'ERROR: "{e}"'
                 sleep(10)
 
-                # Set data to None, effectively removing the block,
-                # allowing the status bar to continue running without it.
-                self.data[self.uuid] = None
-                break
+                if args.abort:
+                    self.data[self.uuid] = None
+                    break
+                continue
 
 
 class StatusBar(SharedData):
-    """
-    The StatusBar combines all the Blocks in the blocks module to form the
-    statusbar (basically just joining a bunch of strings into one), then
-    serves it at `/tmp/statusd.sock`.
-    """
-
-    bar = ''
-    uds = '/tmp/statusd.sock'
-
-    # Remove the old socket if there is one
-    try:
-        is_socket = S_ISSOCK(stat(uds).st_mode)
-        if path.exists(uds) or is_socket:
-            remove(uds)
-    except FileNotFoundError:
-        pass
-    except PermissionError:
-        exit(1)
-
+    bindpoint = '/tmp/statusd.sock'
     server = socket(AF_UNIX, SOCK_STREAM)
-    server.bind(uds)
-    chmod(uds, 0o722)  # Reduce permissions to minimum needed
-    server.listen(5)
 
-    def update(self):
-        self.bar = ''.join([
-            f' {str(self.data[key])} '
-            for key in sorted(self.data.keys())
-            if self.data[key] is not None
+    def active_blocks(self):
+        return [
+            k for k in sorted(self.data.keys()) if self.data[k] is not None
+        ]
+
+    def bar(self):
+        return ''.join([
+            f' {str(self.data[block])} ' for block in self.active_blocks()
         ])
 
-    def run(self):
+    def remove_existing_bindpoint(self):
+        path_is_socket = lambda path: S_ISSOCK(stat(path).st_mode)
         try:
-            while True:
+            if path.exists(self.bindpoint) or path_is_socket(self.bindpoint):
+                remove(self.bindpoint)
+        except FileNotFoundError:
+            pass
+
+    def run(self):
+        self.remove_existing_bindpoint()
+
+        self.server.bind(self.bindpoint)
+        # Unix domain sockets only need write permission
+        chmod(self.bindpoint, 0o222)
+        self.server.listen(5)
+
+        while True:
+            try:
                 client, address = self.server.accept()
-                self.update()
-                client.send(bytes(self.bar, 'utf-8'))
-        finally:
-            self.server.close()
+                client.send(bytes(self.bar(), 'utf-8'))
+            finally:
+                client.close()
+        self.server.close()
 
 
 meter_values = make_meter_values(int(args.width))
 
 
-def meter(percentage=None, current=None, maximum=None):
-    """
-    A Unicode 'meter'.
-
-    A meter needs either:
-        * a percentage
-        * the current and maximum values
-
-    """
-    if percentage is None:
-        val = ((100 / maximum) * current)
-    else:
-        val = percentage
-
-    return meter_values[int(val)]
+def meter(percentage):
+    return meter_values[int(percentage)]

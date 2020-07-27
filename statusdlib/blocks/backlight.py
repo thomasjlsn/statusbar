@@ -15,7 +15,7 @@ except (FileNotFoundError, IndexError):
 def backlight_percentage() -> str:
     try:
         bl_now = readint(glob('/sys/class/backlight/*/brightness')[0])
-        return meter(maximum=bl_max, current=bl_now)
+        return meter((100 / bl_max) * bl_now)
     except FileNotFoundError:
         return None
 
