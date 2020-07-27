@@ -64,39 +64,48 @@ class Block(SharedData):
 
 
 class StatusBar(SharedData):
-    bindpoint = '/tmp/statusd.sock'
-    server = socket(AF_UNIX, SOCK_STREAM)
-
     def active_blocks(self):
         return [
             k for k in sorted(self.data.keys()) if self.data[k] is not None
         ]
 
-    def bar(self):
+    def statusbar(self):
         return ''.join([
             f' {str(self.data[block])} ' for block in self.active_blocks()
         ])
 
+
+class Server(StatusBar):
+    bindpoint = '/tmp/statusd.sock'
+    server = socket(AF_UNIX, SOCK_STREAM)
+
+    def drop_permissions(self):
+        # Unix domain sockets only need write permission
+        chmod(self.bindpoint, 0o222)
+
+    def has_existing_bindpoint(self):
+        return S_ISSOCK(stat(self.bindpoint).st_mode)
+
     def remove_existing_bindpoint(self):
-        path_is_socket = lambda path: S_ISSOCK(stat(path).st_mode)
         try:
-            if path.exists(self.bindpoint) or path_is_socket(self.bindpoint):
+            if path.exists(self.bindpoint) or self.has_existing_bindpoint():
                 remove(self.bindpoint)
         except FileNotFoundError:
             pass
 
-    def run(self):
+    def start_server(self):
         self.remove_existing_bindpoint()
-
         self.server.bind(self.bindpoint)
-        # Unix domain sockets only need write permission
-        chmod(self.bindpoint, 0o222)
+        self.drop_permissions()
         self.server.listen(5)
+
+    def run(self):
+        self.start_server()
 
         while True:
             try:
                 client, address = self.server.accept()
-                client.send(bytes(self.bar(), 'utf-8'))
+                client.send(bytes(self.statusbar(), 'utf-8'))
             finally:
                 client.close()
         self.server.close()

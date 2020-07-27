@@ -12,7 +12,7 @@ if geteuid() != 0:
 else:
     from threading import Thread
 
-    from statusdlib.components import StatusBar
+    from statusdlib.components import Server
     from statusdlib.blocks import (backlight, battery, cpu, date, disks,
                                    memory, network)
 
@@ -21,8 +21,8 @@ def main():
     targets = set()
 
     # Main thread
-    statusbar = StatusBar()
-    targets.add(statusbar)
+    server = Server()
+    targets.add(server)
 
     # Optional threads
     if args.battery:   targets.add(battery.main())
