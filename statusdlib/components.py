@@ -15,6 +15,14 @@ class SharedData:
     data = {}
 
 
+class RemoveBlock(Exception):
+    """
+    Blocks may raise this from their source function to cleanly remove
+    themselves from the statusbar.
+    """
+    pass
+
+
 class Block(SharedData):
     def __init__(self, source=None, label=None, sleep_ms=1000, weight=0):
         # The function data is recieved from
@@ -51,6 +59,10 @@ class Block(SharedData):
             try:
                 self.update()
                 self.sleep()
+
+            except RemoveBlock:
+                self.data[self.uuid] = None
+                break
 
             except Exception as e:
                 # Display the error briefly
