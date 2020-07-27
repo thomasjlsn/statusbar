@@ -36,6 +36,6 @@ def main():
     return Block(
         source=memory_usage,
         label='ram',
-        sleep_ms=500,
+        sleep_ms=1000,
         weight=70,
     )

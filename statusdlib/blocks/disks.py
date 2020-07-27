@@ -61,6 +61,6 @@ def disk_usage():
 def main():
     return Block(
         source=disk_usage,
-        sleep_ms=5000,
+        sleep_ms=10000,
         weight=85,
     )

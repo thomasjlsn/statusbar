@@ -13,6 +13,6 @@ def main():
     return Block(
         source=percent,
         label='cpu',
-        sleep_ms=250,
+        sleep_ms=500,
         weight=80,
     )

@@ -4,18 +4,6 @@
 from math import floor, log
 
 
-def laptop_open():
-    """Check if laptop lid is open."""
-    try:
-        with open('/proc/acpi/button/lid/LID/state', 'r') as f:
-            state = f.readline().split()[1]
-        if state.lower() == 'open':
-            return True
-        return False
-    except FileNotFoundError:
-        return True
-
-
 def bytes_to_largest_units(size_in_bytes):
     if size_in_bytes == 0:
         return '0B'

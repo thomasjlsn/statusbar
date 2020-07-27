@@ -13,6 +13,6 @@ def time_now():
 def main():
     return Block(
         source=time_now,
-        sleep_ms=250,
+        sleep_ms=1000,
         weight=99,
     )

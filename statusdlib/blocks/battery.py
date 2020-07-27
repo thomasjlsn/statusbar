@@ -47,6 +47,6 @@ def main():
     return Block(
         source=battery_source,
         label='bat',
-        sleep_ms=10000,
+        sleep_ms=20000,
         weight=90,
     )

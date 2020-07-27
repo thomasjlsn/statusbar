@@ -7,7 +7,7 @@ from sys import exit
 from time import sleep
 
 from statusdlib.args import args
-from statusdlib.helpers import laptop_open, make_meter_values, uuid
+from statusdlib.helpers import make_meter_values, uuid
 
 
 class SharedData:
@@ -49,10 +49,7 @@ class Block(SharedData):
                 self.data[self.uuid] = value
 
     def sleep(self):
-        if laptop_open():
-            sleep(self.sleep_ms / 1000)
-        else:
-            sleep((self.sleep_ms * 3) / 1000)
+        sleep(self.sleep_ms / 1000)
 
     def run(self):
         while True:
