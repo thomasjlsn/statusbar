@@ -3,7 +3,7 @@
 
 from glob import glob
 
-from statusdlib.components import Block, meter
+from statusdlib.components import Block, RemoveBlock, meter
 from statusdlib.helpers import readint
 
 try:
@@ -15,9 +15,9 @@ except (FileNotFoundError, IndexError):
 def backlight_percentage() -> str:
     try:
         bl_now = readint(glob('/sys/class/backlight/*/brightness')[0])
-        return meter((100 / bl_max) * bl_now)
     except FileNotFoundError:
-        return None
+        raise RemoveBlock
+    return meter((100 / bl_max) * bl_now)
 
 
 def main():
