@@ -67,7 +67,7 @@ class Block(SharedData):
                 sleep(10)
 
                 if args.abort:
-                    self.data[self.uuid] = None
+                    self.remove_block()
                     break
                 continue
 
