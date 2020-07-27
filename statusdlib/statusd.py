@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """Main entrypoint to statusd."""
 
-from statusdlib.core.data import SharedData
+from os import geteuid
+from sys import exit
 
+from statusdlib.args import args
 
-def main():
-    # Import Components after args are processed. This way, if the user
-    # runs --help, it will not require root or try to restart the server.
+if geteuid() != 0:
+    # Statusd must be run as root
+    exit(1)
+else:
     from threading import Thread
 
-    from statusdlib.core.components import StatusBar
+    from statusdlib.components import StatusBar
     from statusdlib.blocks import (backlight, battery, cpu, date, disks,
                                    memory, network)
 
+
+def main():
     targets = set()
 
     # Main thread
@@ -20,13 +25,13 @@ def main():
     targets.add(statusbar)
 
     # Optional threads
-    if SharedData.args.battery:   targets.add(battery.main())
-    if SharedData.args.backlight: targets.add(backlight.main())
-    if SharedData.args.clock:     targets.add(date.main())
-    if SharedData.args.cpu:       targets.add(cpu.main())
-    if SharedData.args.disks:     targets.add(disks.main())
-    if SharedData.args.mem:       targets.add(memory.main())
-    if SharedData.args.net:       targets.add(network.main())
+    if args.battery:   targets.add(battery.main())
+    if args.backlight: targets.add(backlight.main())
+    if args.clock:     targets.add(date.main())
+    if args.cpu:       targets.add(cpu.main())
+    if args.disks:     targets.add(disks.main())
+    if args.mem:       targets.add(memory.main())
+    if args.net:       targets.add(network.main())
 
     threads = [Thread(target=thread.run) for thread in targets]
 

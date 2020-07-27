@@ -7,7 +7,6 @@ setup(
     version='0.0',
     packages=[
         'statusdlib',
-        'statusdlib.core',
         'statusdlib.blocks',
     ],
     scripts=['statusd', 'statusbar'],

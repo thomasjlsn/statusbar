@@ -3,7 +3,7 @@
 
 from os import listdir
 
-from statusdlib.core.components import Block
+from statusdlib.components import Block
 from statusdlib.helpers import bytes_to_largest_units, readint
 
 

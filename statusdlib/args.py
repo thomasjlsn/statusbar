@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Data that can be shared between Components."""
+"""args.py"""
 
 from argparse import ArgumentParser
 
@@ -14,7 +14,4 @@ argparser.add_argument('-m', '--memory',     dest='mem',       action='store_tru
 argparser.add_argument('-n', '--net-usage',  dest='net',       action='store_true', help='network usage')
 argparser.add_argument('-w', '--width',      dest='width',     type=int,            help='width of meters')
 
-
-class SharedData:
-    args = argparser.parse_args()
-    shared_data = {}
+args = argparser.parse_args()

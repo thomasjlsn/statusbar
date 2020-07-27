@@ -3,7 +3,7 @@
 
 from glob import glob
 
-from statusdlib.core.components import Block, meter
+from statusdlib.components import Block, meter
 from statusdlib.helpers import readint
 
 

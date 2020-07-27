@@ -6,8 +6,13 @@ from stat import S_ISSOCK
 from sys import exit
 from time import sleep
 
-from statusdlib.core.data import SharedData
-from statusdlib.helpers import laptop_open, uuid
+from statusdlib.args import args
+from statusdlib.helpers import laptop_open, make_meter_values, uuid
+
+
+class SharedData:
+    """Data shared between blocks and the statusbar."""
+    data = {}
 
 
 class Block(SharedData):
@@ -15,7 +20,7 @@ class Block(SharedData):
         # The function data is recieved from
         self.source = source
 
-        # An optional label for the component
+        # An optional label for the block
         self.label = label
 
         # Time in ms to sleep, between 0.5 ... 20 seconds
@@ -28,12 +33,12 @@ class Block(SharedData):
         self.uuid = f'{self.weight}-{uuid()}'
 
     def update(self):
-        component = self.source()
-        if component is not None:
+        value = self.source()
+        if value is not None:
             if self.label is not None:
-                self.shared_data[self.uuid] = f'{self.label.upper()}: {component}'
+                self.data[self.uuid] = f'{self.label.upper()}: {value}'
             else:
-                self.shared_data[self.uuid] = component
+                self.data[self.uuid] = value
 
     def sleep(self):
         if laptop_open():
@@ -50,27 +55,23 @@ class Block(SharedData):
 
             except Exception as e:
                 # Display the error briefly
-                self.shared_data[self.uuid] = f'ERROR: "{e}"'
+                self.data[self.uuid] = f'ERROR: "{e}"'
                 sleep(10)
 
-                # Set data to None, effectively removing the component,
+                # Set data to None, effectively removing the block,
                 # allowing the status bar to continue running without it.
-                self.shared_data[self.uuid] = None
+                self.data[self.uuid] = None
                 break
 
 
 class StatusBar(SharedData):
     """
-    The StatusBar is a Component of statusd. It uses unix domain sockets.
-
     The StatusBar combines all the Blocks in the blocks module to form the
     statusbar (basically just joining a bunch of strings into one), then
     serves it at `/tmp/statusd.sock`.
-
     """
 
-    data = ''
-    sleep_ms = 200
+    bar = ''
     uds = '/tmp/statusd.sock'
 
     # Remove the old socket if there is one
@@ -89,52 +90,23 @@ class StatusBar(SharedData):
     server.listen(5)
 
     def update(self):
-        self.data = ''.join([
-        ''.join([
-            ' ', str(self.shared_data[component]), ' '
+        self.bar = ''.join([
+            f' {str(self.data[key])} '
+            for key in sorted(self.data.keys())
+            if self.data[key] is not None
         ])
-        for component in sorted(self.shared_data.keys())
-        if self.shared_data[component] is not None
-    ])
 
     def run(self):
         try:
             while True:
                 client, address = self.server.accept()
                 self.update()
-                client.send(bytes(self.data, 'utf-8'))
-                # if teardown.is_set():
-                    # break
+                client.send(bytes(self.bar, 'utf-8'))
         finally:
             self.server.close()
 
 
-def make_meter_values(meter_width):
-    """Assign unicode bars to percentages."""
-    meter = {0: ' ' * meter_width}
-    bar_chars = []
-    cell_chars = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█']
-    full = cell_chars[-1]
-
-    fill = ''
-    for _ in range(meter_width):
-        for char in cell_chars:
-            bar = fill + char
-            bar_chars.append(bar.ljust(meter_width))
-        fill += full
-
-    for percent in range(1, 101):
-        end = 0
-        for i, char in enumerate(bar_chars):
-            start = end
-            end = (100 / len(bar_chars)) * i
-            if start < percent > end:
-                meter[percent] = bar_chars[i]
-
-    return meter
-
-
-meter_values = make_meter_values(int(SharedData.args.width))
+meter_values = make_meter_values(int(args.width))
 
 
 def meter(percentage=None, current=None, maximum=None):

@@ -3,7 +3,7 @@
 
 from time import strftime
 
-from statusdlib.core.components import Block
+from statusdlib.components import Block
 
 
 def time_now():

@@ -2,7 +2,7 @@
 """CPU usage in percentage."""
 
 from psutil import cpu_percent
-from statusdlib.core.components import Block, meter
+from statusdlib.components import Block, meter
 
 
 def percent():
