@@ -9,5 +9,5 @@ setup(
         'lib_pybar',
         'lib_pybar.blocks',
     ],
-    scripts=['pybard', 'pybar'],
+    scripts=['pybar'],
 )

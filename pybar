@@ -3,6 +3,10 @@
 from sys import exit
 
 from lib_pybar import client
+from lib_pybar.args import args
 
 if __name__ == '__main__':
+    if args.daemon:
+        from lib_pybar import pybar
+        exit(pybar.main())
     exit(client.main())
