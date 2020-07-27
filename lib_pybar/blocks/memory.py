@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Memory usage."""
 
-from statusdlib.components import Block, meter
+from lib_pybar.components import Block, meter
 
 
 def memory_usage():

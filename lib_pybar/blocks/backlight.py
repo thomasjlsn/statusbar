@@ -3,8 +3,8 @@
 
 from glob import glob
 
-from statusdlib.components import Block, RemoveBlock, meter
-from statusdlib.helpers import readint
+from lib_pybar.components import Block, RemoveBlock, meter
+from lib_pybar.helpers import readint
 
 try:
     bl_max = readint(glob('/sys/class/backlight/*/max_brightness')[0])

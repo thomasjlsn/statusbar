@@ -3,8 +3,8 @@
 
 from os import listdir
 
-from statusdlib.components import Block
-from statusdlib.helpers import bytes_to_largest_units, readint
+from lib_pybar.components import Block
+from lib_pybar.helpers import bytes_to_largest_units, readint
 
 
 class Network:

@@ -3,26 +3,26 @@ all: root install
 # ==========================================================================
 # User level rules:
 #
-#     clean      uninstall statusd, delete all associated files
-#     install    install statusd
-#     uninstall  uninstall statusd
+#     clean      uninstall pybar, delete all associated files
+#     install    install pybar
+#     uninstall  uninstall pybar
 #
 # ==========================================================================
 
 clean:
-	rm -fv statusd.service ||:
+	rm -fv pybar.service ||:
 	#
 	# Restored to clean state.
 	#
 
 install: root pip-install enable-service reload
 	#
-	# Installed statusd.
+	# Installed pybar.
 	#
 
 uninstall: root disable-service
 	#
-	# Uninstalled statusd.
+	# Uninstalled pybar.
 	#
 
 # ==========================================================================
@@ -34,7 +34,7 @@ uninstall: root disable-service
 
 config:
 	#
-	# Configuring statusd for your OS.
+	# Configuring pybar for your OS.
 	#
 	bash configure.sh
 
@@ -42,36 +42,36 @@ disable-service:
 	#
 	# Disabling systemd service.
 	#
-	@systemctl stop statusd.service ||:
-	@systemctl disable statusd.service ||:
-	@rm -fv /etc/systemd/system/statusd.service ||:
+	@systemctl stop pybar.service ||:
+	@systemctl disable pybar.service ||:
+	@rm -fv /etc/systemd/system/pybar.service ||:
 
 enable-service: config
 	#
 	# Setting up systemd service.
 	#
-	@cp -fv statusd.service /etc/systemd/system/statusd.service
-	@systemctl start statusd.service
-	@systemctl enable statusd.service
+	@cp -fv pybar.service /etc/systemd/system/pybar.service
+	@systemctl start pybar.service
+	@systemctl enable pybar.service
 
 reload:
 	#
 	# Reloading daemon, possible warning above is safe to ignore.
 	#
 	@systemctl daemon-reload
-	@systemctl restart statusd.service
+	@systemctl restart pybar.service
 
 pip-install: pip-requirements
 	#
-	# Installing statusd package
+	# Installing pybar package
 	#
 	@pip install .
 
 pip-uninstall:
 	#
-	# Uninstalling statusd package
+	# Uninstalling pybar package
 	#
-	@pip uninstall statusd --yes
+	@pip uninstall pybar --yes
 
 pip-requirements:
 	#

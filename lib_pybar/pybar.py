@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Main entrypoint to statusd."""
+"""Main entrypoint to pybar."""
 
 from os import geteuid
 from sys import exit
 
-from statusdlib.args import args
+from lib_pybar.args import args
 
 if geteuid() != 0:
-    # Statusd must be run as root
+    # Pybar must be run as root
     exit(1)
 else:
     from threading import Thread
 
-    from statusdlib.components import Server
-    from statusdlib.blocks import (backlight, battery, cpu, date, disks,
-                                   memory, network)
+    from lib_pybar.components import Server
+    from lib_pybar.blocks import (backlight, battery, cpu, date, disks,
+                                  memory, network)
 
 
 def main():

@@ -3,11 +3,11 @@
 from setuptools import setup
 
 setup(
-    name='statusd',
+    name='pybar',
     version='0.1',
     packages=[
-        'statusdlib',
-        'statusdlib.blocks',
+        'lib_pybar',
+        'lib_pybar.blocks',
     ],
-    scripts=['statusd', 'statusbar'],
+    scripts=['pybard', 'pybar'],
 )

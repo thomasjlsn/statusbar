@@ -2,7 +2,7 @@
 
 from sys import exit
 
-from statusdlib import client
+from lib_pybar import pybar
 
 if __name__ == '__main__':
-    exit(client.main())
+    exit(pybar.main())

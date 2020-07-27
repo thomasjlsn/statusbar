@@ -1,1 +1,0 @@
-"""Statusd library."""

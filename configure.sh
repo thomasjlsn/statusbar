@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-if [ -f statusd.service ]; then
+if [ -f pybar.service ]; then
   exit 0
 fi
 
-cat << EOF > "statusd.service"
+cat << EOF > "pybar.service"
 [Unit]
 Description=statusbar server for tmux and similar
 
 [Service]
-ExecStart=$(which statusd) -bcCdmn -a -w 10
+ExecStart=$(which pybar) -bcCdmn -a -w 10
 Restart=always
 User=root
 Group=root

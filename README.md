@@ -19,7 +19,7 @@ additional overhead.
 
 ## Usage
 
-Once statusd is installed, you can use the `statusbar` command to add a fancy
+Once pybar is installed, you can use the `statusbar` command to add a fancy
 statusbar anywhere that accepts **stdin**.
 
 
@@ -42,7 +42,7 @@ set -g status-right "#(statusbar)"
 
 ## Install
 
-statusd / statusbar uses `make` as a build system. Use:
+pybar / pybard uses `make` as a build system. Use:
 
 ```
 sudo make install

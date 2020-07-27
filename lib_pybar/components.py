@@ -6,8 +6,8 @@ from stat import S_ISSOCK
 from sys import exit
 from time import sleep
 
-from statusdlib.args import args
-from statusdlib.helpers import make_meter_values, uuid
+from lib_pybar.args import args
+from lib_pybar.helpers import make_meter_values, uuid
 
 
 class SharedData:
@@ -86,7 +86,7 @@ class StatusBar(SharedData):
 
 
 class Server(StatusBar):
-    bindpoint = '/tmp/statusd.sock'
+    bindpoint = '/tmp/pybar.sock'
     server = socket(AF_UNIX, SOCK_STREAM)
 
     def drop_permissions(self):
