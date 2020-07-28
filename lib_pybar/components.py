@@ -3,7 +3,6 @@
 from os import chmod, path, remove, stat
 from socket import AF_UNIX, SOCK_STREAM, socket
 from stat import S_ISSOCK
-from sys import exit
 from time import sleep
 
 from lib_pybar.args import args

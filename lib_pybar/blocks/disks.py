@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Disk usage."""
 
-from os import path, statvfs
+from os import statvfs
 from os.path import basename, exists, islink, realpath
 
 from lib_pybar.components import Block, meter
