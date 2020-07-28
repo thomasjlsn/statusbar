@@ -18,22 +18,22 @@ else:
 
 
 def main():
-    targets = set()
-
-    # Main thread
     server = Server()
-    targets.add(server)
 
-    # Optional threads
-    if args.battery:   targets.add(battery.main())
-    if args.backlight: targets.add(backlight.main())
-    if args.clock:     targets.add(date.main())
-    if args.cpu:       targets.add(cpu.main())
-    if args.disks:     targets.add(disks.main())
-    if args.mem:       targets.add(memory.main())
-    if args.net:       targets.add(network.main())
-
-    threads = [Thread(target=thread.run) for thread in targets]
+    threads = (
+        Thread(target=thread.run)
+        for condition, thread in (
+            (True,           server),
+            (args.battery,   battery.main()),
+            (args.backlight, backlight.main()),
+            (args.clock,     date.main()),
+            (args.cpu,       cpu.main()),
+            (args.disks,     disks.main()),
+            (args.mem,       memory.main()),
+            (args.net,       network.main()),
+        )
+        if condition
+    )
 
     try:
         for thread in threads:
