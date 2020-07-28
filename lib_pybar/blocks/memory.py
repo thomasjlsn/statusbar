@@ -6,7 +6,7 @@ from lib_pybar.components import Block, meter
 
 def memory_usage():
     with open('/proc/meminfo', 'r') as f:
-        meminfo = [l.strip() for l in f.readlines()]
+        meminfo = [line.strip() for line in f.readlines()]
 
     mem = {}
 
@@ -28,7 +28,9 @@ def memory_usage():
 
     return meter(
         # memory usage as calculated by `free(1)`
-        (100 / mem['MemTotal']) * (mem['MemTotal'] - mem['MemFree'] - mem['Buffers'] - mem['Cached'])
+        (100 / mem['MemTotal']) * (
+            mem['MemTotal'] - mem['Buffers'] - mem['Cached'] - mem['MemFree']
+        )
     )
 
 
