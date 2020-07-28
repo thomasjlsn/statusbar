@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Main entrypoint to pybar."""
 
-from sys import stderr
+from sys import exit, stderr
 
 from lib_pybar.args import args
 
@@ -17,4 +17,4 @@ def main():
             exit(1)
 
     from lib_pybar import client
-    exit(client.main())
+    client.main()

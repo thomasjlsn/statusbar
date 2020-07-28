@@ -4,7 +4,7 @@
 from os import statvfs
 from os.path import basename, exists, islink, realpath
 
-from lib_pybar.components import Block, meter
+from lib_pybar.core import Block, meter
 
 
 class Block_Devices:

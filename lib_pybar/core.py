@@ -30,13 +30,13 @@ class Block(SharedData):
         # Time in ms to sleep, between 0.5 ... 20 seconds
         self.sleep_ms = max(500, min(20000, sleep_ms))
 
-        # Used to determine order of components
+        # Used to determine order of blocks
         self.weight = str(weight).zfill(8)
 
         # Unique key to store data
         self.uuid = f'{self.weight}-{uuid()}'
 
-    def update(self):
+    def __update(self):
         value = self.source()
         if value is not None:
             if self.label is not None:
@@ -44,31 +44,29 @@ class Block(SharedData):
             else:
                 self.data[self.uuid] = value
 
-    def remove_block(self):
+    def __remove_block(self):
         self.data.pop(self.uuid, None)
 
     def run(self):
         while True:
             try:
-                self.update()
+                self.__update()
                 sleep(self.sleep_ms / 1000)
 
             except RemoveBlock:
-                self.remove_block()
+                self.__remove_block()
                 break
 
             except Exception as e:
                 # Display the error briefly
                 self.data[self.uuid] = f'ERROR: "{e}"'
                 sleep(10)
-
-                if args.abort:
-                    self.remove_block()
-                    break
-                continue
+                self.__remove_block()
+                break
 
 
 class StatusBar(SharedData):
+    @property
     def active_blocks(self):
         return [
             block for block in sorted(self.data.keys())
@@ -77,7 +75,7 @@ class StatusBar(SharedData):
 
     def statusbar(self):
         return ''.join([
-            f' {str(self.data[block])} ' for block in self.active_blocks()
+            f' {str(self.data[block])} ' for block in self.active_blocks
         ])
 
 

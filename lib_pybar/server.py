@@ -7,7 +7,7 @@ from threading import Thread
 
 from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
                               network)
-from lib_pybar.components import StatusBar
+from lib_pybar.core import StatusBar
 
 if geteuid() != 0:
     raise PermissionError
@@ -31,18 +31,18 @@ class Server(StatusBar):
         except FileNotFoundError:
             pass
 
-    def __start_server(self):
-        self.__remove_existing_bindpoint()
-        self.server.bind(self.bindpoint)
-        self.__drop_permissions()
-        self.server.listen(5)
-
     def __accept_connections(self):
         try:
             client, address = self.server.accept()
             client.send(bytes(self.statusbar(), 'utf-8'))
         finally:
             client.close()
+
+    def __start_server(self):
+        self.__remove_existing_bindpoint()
+        self.server.bind(self.bindpoint)
+        self.__drop_permissions()
+        self.server.listen(5)
 
     def run(self):
         try:

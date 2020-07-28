@@ -3,7 +3,7 @@
 
 from time import strftime
 
-from lib_pybar.components import Block
+from lib_pybar.core import Block
 
 
 def time_now():

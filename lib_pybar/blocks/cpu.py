@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """CPU usage in percentage."""
 
+from lib_pybar.core import Block, meter
 from psutil import cpu_percent
-
-from lib_pybar.components import Block, meter
 
 
 def percent():
