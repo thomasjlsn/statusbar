@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-from os import chmod, path, remove, stat
-from socket import AF_UNIX, SOCK_STREAM, socket
-from stat import S_ISSOCK
 from time import sleep
 
 from lib_pybar.args import args
@@ -82,46 +79,6 @@ class StatusBar(SharedData):
         return ''.join([
             f' {str(self.data[block])} ' for block in self.active_blocks()
         ])
-
-
-class Server(StatusBar):
-    bindpoint = '/tmp/pybar.sock'
-    server = socket(AF_UNIX, SOCK_STREAM)
-
-    def drop_permissions(self):
-        # Unix domain sockets only need write permission
-        chmod(self.bindpoint, 0o222)
-
-    def has_existing_bindpoint(self):
-        return S_ISSOCK(stat(self.bindpoint).st_mode)
-
-    def remove_existing_bindpoint(self):
-        try:
-            if path.exists(self.bindpoint) or self.has_existing_bindpoint():
-                remove(self.bindpoint)
-        except FileNotFoundError:
-            pass
-
-    def start_server(self):
-        self.remove_existing_bindpoint()
-        self.server.bind(self.bindpoint)
-        self.drop_permissions()
-        self.server.listen(5)
-
-    def accept_connections(self):
-        try:
-            client, address = self.server.accept()
-            client.send(bytes(self.statusbar(), 'utf-8'))
-        finally:
-            client.close()
-
-    def run(self):
-        try:
-            self.start_server()
-            while True:
-                self.accept_connections()
-        finally:
-            self.server.close()
 
 
 meter_values = make_meter_values(int(args.width))
