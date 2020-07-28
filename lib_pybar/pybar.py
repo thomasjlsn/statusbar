@@ -20,7 +20,7 @@ else:
 def main():
     server = Server()
 
-    threads = (
+    threads = {
         Thread(target=thread.run)
         for condition, thread in (
             (True,           server),
@@ -33,7 +33,7 @@ def main():
             (args.net,       network.main()),
         )
         if condition
-    )
+    }
 
     try:
         for thread in threads:
