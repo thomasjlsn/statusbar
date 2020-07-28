@@ -9,7 +9,7 @@ cat << EOF > "pybar.service"
 Description=statusbar server for tmux and similar
 
 [Service]
-ExecStart=$(which pybar) start --abort
+ExecStart=$(which pybar) run --abort
 Restart=always
 User=root
 Group=root

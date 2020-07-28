@@ -11,8 +11,8 @@ def main():
         client.connect('/tmp/pybar.sock')
         stdout.write(client.recv(1024).decode('utf-8'))
         return 0
-    except ConnectionRefusedError:
-        stderr.write('server is not running\n')
+    except ConnectionRefusedError as e:
+        stderr.write(f'{e}\n')
         return 1
     finally:
         client.close()

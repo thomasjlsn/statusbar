@@ -3,15 +3,14 @@
 from os import chmod, geteuid, path, remove, stat
 from socket import AF_UNIX, SOCK_STREAM, socket
 from stat import S_ISSOCK
+from threading import Thread
+
+from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
+                              network)
+from lib_pybar.components import StatusBar
 
 if geteuid() != 0:
     raise PermissionError
-else:
-    from threading import Thread
-
-    from lib_pybar.components import StatusBar
-    from lib_pybar.blocks import (backlight, battery, cpu, date, disks,
-                                  memory, network)
 
 
 class Server(StatusBar):
@@ -20,7 +19,6 @@ class Server(StatusBar):
 
     def __drop_permissions(self):
         # Unix domain sockets only need write permission
-        pass
         chmod(self.bindpoint, 0o222)
 
     def __has_existing_bindpoint(self):
