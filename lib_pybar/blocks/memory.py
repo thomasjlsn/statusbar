@@ -28,11 +28,11 @@ def memory_usage():
             continue
 
     # memory usage as calculated by `free(1)`
-    return label('ram', meter(
-        (100 / mem['MemTotal']) * (
-            mem['MemTotal'] - mem['Buffers'] - mem['Cached'] - mem['MemFree']
-        )
-    ))
+    percent = (100 / mem['MemTotal']) * (
+        mem['MemTotal'] - mem['Buffers'] - mem['Cached'] - mem['MemFree']
+    )
+
+    return label('ram', meter(percent))
 
 
 def main():
