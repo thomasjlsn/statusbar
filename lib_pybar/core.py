@@ -36,7 +36,7 @@ class Block(SharedData):
         self.weight = str(weight).zfill(8)
 
         # Unique key to store data
-        self.uuid = f'{self.weight}-{uuid()}'
+        self.uuid = f'{self.weight}-{uuid4()}'
 
     def __update(self):
         value = self.source()

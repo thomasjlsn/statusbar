@@ -28,12 +28,6 @@ def readint(file):
     return val
 
 
-def uuid():
-    """Get a uuid from the kernel."""
-    with open('/proc/sys/kernel/random/uuid', 'r') as f:
-        return str(f.readline()).strip()
-
-
 def make_meter_values(meter_width):
     """Assign unicode bars to percentages."""
     meter = {0: ' ' * meter_width}
