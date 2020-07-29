@@ -18,9 +18,9 @@ network = Network()
 def usage():
     tx_bytes, rx_bytes = 0, 0
 
-    for interface in network.interfaces:
-        tx_bytes += readint(f'/sys/class/net/{interface}/statistics/tx_bytes')
-        rx_bytes += readint(f'/sys/class/net/{interface}/statistics/rx_bytes')
+    for i in network.interfaces:
+        tx_bytes += readint(f'/sys/class/net/{i}/statistics/tx_bytes')
+        rx_bytes += readint(f'/sys/class/net/{i}/statistics/rx_bytes')
 
     tx_old, rx_old = network.usage
 
