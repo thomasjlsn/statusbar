@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from lib_pybar.widgets import label
 
-PYBAR_SOCKET = '/tmp/pybar/pybar.sock'
+PYBAR_SOCKET = '/tmp/pybar.sock'
 
 
 class SharedData:

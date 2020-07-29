@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from os import chmod, geteuid, makedirs, remove
-from os.path import dirname, exists, isdir
+from os import chmod, geteuid, remove
+from os.path import exists
 from socket import AF_UNIX, SOCK_STREAM, socket
 from threading import Thread
 
@@ -15,18 +15,14 @@ if geteuid() != 0:
 
 class Server(StatusBar):
     server = socket(AF_UNIX, SOCK_STREAM)
-    sock_dir = dirname(PYBAR_SOCKET)
 
     def __ensure_bindpoint_is_avaiable(self):
-        if not isdir(self.sock_dir):
-            makedirs(self.sock_dir)
-
         if exists(PYBAR_SOCKET):
             remove(PYBAR_SOCKET)
 
     def __drop_permissions(self):
-        chmod(self.sock_dir, 0o755)
-        chmod(PYBAR_SOCKET, 0o222)  # Unix sockets only need write permission
+        # Unix sockets only need write permission
+        chmod(PYBAR_SOCKET, 0o222)
 
     def __start_server(self):
         self.__ensure_bindpoint_is_avaiable()
