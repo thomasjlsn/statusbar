@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 from time import sleep
+from uuid import uuid4
 
 from lib_pybar.args import args
-from lib_pybar.helpers import make_meter_values, uuid
+from lib_pybar.helpers import make_meter_values
 
 PYBAR_SOCKET = '/tmp/pybar.sock'
 

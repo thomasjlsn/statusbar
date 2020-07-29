@@ -4,7 +4,7 @@
 from os import listdir
 
 from lib_pybar.core import Block
-from lib_pybar.helpers import bytes_to_largest_units, readint
+from lib_pybar.helpers import human_readable, readint
 
 
 class Network:
@@ -30,8 +30,8 @@ def usage():
     network.usage = (tx_bytes, rx_bytes)
 
     return ' '.join([
-        f'↑ {bytes_to_largest_units(tx_rate)}',
-        f'↓ {bytes_to_largest_units(rx_rate)}',
+        f'↑ {human_readable(tx_rate)}',
+        f'↓ {human_readable(rx_rate)}',
     ])
 
 

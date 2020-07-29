@@ -4,7 +4,7 @@
 from math import floor, log
 
 
-def bytes_to_largest_units(size_in_bytes):
+def human_readable(size_in_bytes):
     if size_in_bytes == 0:
         return '0B'
 
