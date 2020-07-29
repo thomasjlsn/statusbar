@@ -41,9 +41,9 @@ def battery_source():
         if percent >= 99:
             state = 'full'
         state = '++'
-    state = ''
+        return ' '.join((label('bat', meter(percent)), state))
 
-    return ' '.join((label('bat', meter(percent)), state))
+    return label('bat', meter(percent))
 
 
 def main():
