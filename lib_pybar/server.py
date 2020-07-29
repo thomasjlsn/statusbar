@@ -6,23 +6,28 @@ from threading import Thread
 
 from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
                               network)
-from lib_pybar.core import StatusBar
+from lib_pybar.core import PYBAR_SOCKET, StatusBar
 
 if geteuid() != 0:
     raise PermissionError
 
 
 class Server(StatusBar):
-    bindpoint = '/tmp/pybar.sock'
     server = socket(AF_UNIX, SOCK_STREAM)
 
-    def __remove_existing_bindpoint(self):
-        if path.exists(self.bindpoint):
-            remove(self.bindpoint)
+    def __ensure_bindpoint_is_avaiable(self):
+        if path.exists(PYBAR_SOCKET):
+            remove(PYBAR_SOCKET)
 
     def __drop_permissions(self):
-        # Unix domain sockets only need write permission
-        chmod(self.bindpoint, 0o222)
+        # Unix sockets only need write permission
+        chmod(PYBAR_SOCKET, 0o222)
+
+    def __start_server(self):
+        self.__ensure_bindpoint_is_avaiable()
+        self.server.bind(PYBAR_SOCKET)
+        self.__drop_permissions()
+        self.server.listen(5)
 
     def __accept_connections(self):
         try:
@@ -30,12 +35,6 @@ class Server(StatusBar):
             client.send(bytes(self.statusbar(), 'utf-8'))
         finally:
             client.close()
-
-    def __start_server(self):
-        self.__remove_existing_bindpoint()
-        self.server.bind(self.bindpoint)
-        self.__drop_permissions()
-        self.server.listen(5)
 
     def run(self):
         try:

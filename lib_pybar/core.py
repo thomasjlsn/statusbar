@@ -5,6 +5,8 @@ from time import sleep
 from lib_pybar.args import args
 from lib_pybar.helpers import make_meter_values, uuid
 
+PYBAR_SOCKET = '/tmp/pybar.sock'
+
 
 class SharedData:
     """Data shared between blocks and the statusbar."""
@@ -27,8 +29,8 @@ class Block(SharedData):
         # An optional label for the block
         self.label = label
 
-        # Time in ms to sleep, between 0.5 ... 20 seconds
-        self.sleep_ms = max(500, min(20000, sleep_ms))
+        # Time in ms to sleep
+        self.sleep_ms = sleep_ms
 
         # Used to determine order of blocks
         self.weight = str(weight).zfill(8)
