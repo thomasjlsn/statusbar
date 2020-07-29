@@ -69,14 +69,12 @@ class StatusBar(SharedData):
     @property
     def active_blocks(self):
         return [
-            block for block in sorted(self.data.keys())
+            self.data[block] for block in sorted(self.data.keys())
             if self.data[block] is not None
         ]
 
     def statusbar(self):
-        return ''.join([
-            f' {str(self.data[block])} ' for block in self.active_blocks
-        ])
+        return ''.join([f' {block} ' for block in self.active_blocks])
 
 
 meter_values = make_meter_values(int(args.width))
