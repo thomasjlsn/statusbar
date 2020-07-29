@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-from os import chmod, geteuid, path, remove, stat
+from os import chmod, geteuid, path, remove
 from socket import AF_UNIX, SOCK_STREAM, socket
-from stat import S_ISSOCK
 from threading import Thread
 
 from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
@@ -17,19 +16,13 @@ class Server(StatusBar):
     bindpoint = '/tmp/pybar.sock'
     server = socket(AF_UNIX, SOCK_STREAM)
 
+    def __remove_existing_bindpoint(self):
+        if path.exists(self.bindpoint):
+            remove(self.bindpoint)
+
     def __drop_permissions(self):
         # Unix domain sockets only need write permission
         chmod(self.bindpoint, 0o222)
-
-    def __has_existing_bindpoint(self):
-        return S_ISSOCK(stat(self.bindpoint).st_mode)
-
-    def __remove_existing_bindpoint(self):
-        try:
-            if path.exists(self.bindpoint) or self.__has_existing_bindpoint():
-                remove(self.bindpoint)
-        except FileNotFoundError:
-            pass
 
     def __accept_connections(self):
         try:
