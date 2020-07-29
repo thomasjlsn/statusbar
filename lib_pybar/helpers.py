@@ -28,17 +28,10 @@ def readint(file):
     return val
 
 
-def readstr(file):
-    """Counterpart to readint()."""
-    with open(file, 'r') as f:
-        val = str(f.readline()).strip()
-
-    return val
-
-
 def uuid():
     """Get a uuid from the kernel."""
-    return readstr('/proc/sys/kernel/random/uuid')
+    with open('/proc/sys/kernel/random/uuid', 'r') as f:
+        return str(f.readline()).strip()
 
 
 def make_meter_values(meter_width):
