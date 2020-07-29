@@ -13,6 +13,6 @@ def percent():
 def main():
     return Block(
         source=percent,
-        sleep_ms=500,
+        sleep_ms=1000,
         weight=80,
     )
