@@ -24,31 +24,20 @@ class RemoveBlock(Exception):
 
 class Block(SharedData):
     def __init__(self, source=None, label=None, sleep_ms=1000, weight=0):
-        # The function data is recieved from
-        self.source = source
-
-        # An optional label for the block
+        self.source: callable = source
         self.label = label
-
-        # Time in ms to sleep
         self.sleep_ms = sleep_ms
-
-        # Used to determine order of blocks
-        self.weight = str(weight).zfill(8)
-
-        # Unique key to store data
-        self.uuid = f'{self.weight}-{uuid4()}'
+        self.weight = str(weight).zfill(8)  # Determines order of blocks
+        self.key = f'{self.weight}-{uuid4()}'
 
     def __update(self):
-        value = self.source()
-        if value is not None:
-            if self.label is not None:
-                self.data[self.uuid] = f'{self.label.upper()}: {value}'
-            else:
-                self.data[self.uuid] = value
+        if self.label is not None:
+            self.data[self.key] = f'{self.label.upper()}: {self.source()}'
+        else:
+            self.data[self.key] = self.source()
 
     def __remove_block(self):
-        self.data.pop(self.uuid, None)
+        self.data.pop(self.key, None)
 
     def run(self):
         while True:
@@ -62,7 +51,7 @@ class Block(SharedData):
 
             except Exception as e:
                 # Display the error briefly
-                self.data[self.uuid] = f'ERROR: "{e}"'
+                self.data[self.key] = f'ERROR: "{e}"'
                 sleep(10)
                 self.__remove_block()
                 break
