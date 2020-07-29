@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Memory usage."""
 
-from lib_pybar.core import Block, meter
+from lib_pybar.core import Block
+from lib_pybar.widgets import label, meter
 
 
 def memory_usage():
@@ -26,18 +27,17 @@ def memory_usage():
         except TypeError:
             continue
 
-    return meter(
-        # memory usage as calculated by `free(1)`
+    # memory usage as calculated by `free(1)`
+    return label('ram', meter(
         (100 / mem['MemTotal']) * (
             mem['MemTotal'] - mem['Buffers'] - mem['Cached'] - mem['MemFree']
         )
-    )
+    ))
 
 
 def main():
     return Block(
         source=memory_usage,
-        label='ram',
         sleep_ms=1000,
         weight=70,
     )

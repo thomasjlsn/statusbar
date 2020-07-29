@@ -4,7 +4,8 @@
 from os import statvfs
 from os.path import basename, exists, islink, realpath
 
-from lib_pybar.core import Block, meter
+from lib_pybar.core import Block
+from lib_pybar.widgets import label, meter
 
 
 class Block_Devices:
@@ -50,12 +51,13 @@ def size_of(mountpoint):
 def disk_usage():
     disk = disks.next()
 
-    label = basename(disk[0]).upper()
+    device_name = basename(disk[0])
     mountpoint = disk[1]
 
     size, free = size_of(mountpoint)
+    percent = (100 / size) * (size - free)
 
-    return ': '.join([label, meter((100 / size) * (size - free))])
+    return label(device_name, meter(percent))
 
 
 def main():

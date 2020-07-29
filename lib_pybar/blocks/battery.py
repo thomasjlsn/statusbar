@@ -3,8 +3,9 @@
 
 from glob import glob
 
-from lib_pybar.core import Block, RemoveBlock, meter
+from lib_pybar.core import Block, RemoveBlock
 from lib_pybar.helpers import readint
+from lib_pybar.widgets import label, meter
 
 
 class Power:
@@ -38,15 +39,16 @@ def battery_source():
 
     if power.charging():
         if percent >= 99:
-            return f'{meter(percent)} full'
-        return f'{meter(percent)} ++'
-    return meter(percent)
+            state = 'full'
+        state = '++'
+    state = ''
+
+    return ' '.join((label('bat', meter(percent)), state))
 
 
 def main():
     return Block(
         source=battery_source,
-        label='bat',
         sleep_ms=20000,
         weight=90,
     )

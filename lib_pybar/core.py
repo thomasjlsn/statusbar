@@ -3,8 +3,7 @@
 from time import sleep
 from uuid import uuid4
 
-from lib_pybar.args import args
-from lib_pybar.helpers import make_meter_values
+from lib_pybar.widgets import label
 
 PYBAR_SOCKET = '/tmp/pybar.sock'
 
@@ -23,37 +22,27 @@ class RemoveBlock(Exception):
 
 
 class Block(SharedData):
-    def __init__(self, source=None, label=None, sleep_ms=1000, weight=0):
+    def __init__(self, source=None, sleep_ms=1000, weight=0):
         self.source: callable = source
-        self.label = label
         self.sleep_ms = sleep_ms
         self.weight = str(weight).zfill(8)  # Determines order of blocks
         self.key = f'{self.weight}-{uuid4()}'
 
-    def __update(self):
-        if self.label is not None:
-            self.data[self.key] = f'{self.label.upper()}: {self.source()}'
-        else:
-            self.data[self.key] = self.source()
-
-    def __remove_block(self):
-        self.data.pop(self.key, None)
-
     def run(self):
         while True:
             try:
-                self.__update()
+                self.data[self.key] = self.source()
                 sleep(self.sleep_ms / 1000)
 
             except RemoveBlock:
-                self.__remove_block()
+                self.data.pop(self.key, None)
                 break
 
             except Exception as e:
                 # Display the error briefly
-                self.data[self.key] = f'ERROR: "{e}"'
+                self.data[self.key] = label('error', f'"{e}"')
                 sleep(10)
-                self.__remove_block()
+                self.data.pop(self.key, None)
                 break
 
 
@@ -67,10 +56,3 @@ class StatusBar(SharedData):
 
     def statusbar(self):
         return ''.join([f' {block} ' for block in self.active_blocks])
-
-
-meter_values = make_meter_values(int(args.width))
-
-
-def meter(percentage):
-    return meter_values[int(percentage)]
