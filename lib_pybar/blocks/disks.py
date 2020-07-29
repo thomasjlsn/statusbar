@@ -14,7 +14,7 @@ class Block_Devices:
         if islink(mntfile):
             mntfile = realpath(mntfile)
 
-    def mounted(self):
+    def __mounted(self):
         with open(self.mntfile) as mnt:
             return [dev.strip() for dev in mnt.readlines()]
 
@@ -22,7 +22,7 @@ class Block_Devices:
         """Returns list of lists containing [disk, mountpoint]."""
         return [
             dev.split()[0:2] for dev in
-            self.mounted() if dev.startswith('/dev/sd')
+            self.__mounted() if dev.startswith('/dev/sd')
         ]
 
     seen = set()
@@ -51,8 +51,8 @@ def size_of(mountpoint):
 def disk_usage():
     disk = disks.next()
 
-    device_name = basename(disk[0])
-    mountpoint = disk[1]
+    device_name, mountpoint = disk
+    device_name = basename(device_name)
 
     size, free = size_of(mountpoint)
     percent = (100 / size) * (size - free)
