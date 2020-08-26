@@ -30,8 +30,7 @@ class Power:
 
 power = Power()
 
-
-has_batteries = power.batteries is not None
+has_batteries = power.batteries not in (None, [])
 
 
 def battery_source():
