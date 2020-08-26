@@ -1,4 +1,4 @@
-# statusbar
+# pybar
 a simple statusbar for dwm, tmux, etc.
 
 
@@ -13,14 +13,14 @@ sessions in the background, I have 10 statusbar scripts running too.
 A statusbar "server". A single process running in the background from which a
 statusbar can request data.
 
-You can have many instances of the statusbar with (basically) no
-additional overhead.
+You can have many instances of a statusbar with (basically) no additional
+overhead.
 
 
 ## Usage
 
-Once pybar is installed, you can use the `statusbar` command to add a fancy
-statusbar anywhere that accepts **stdin**.
+Use the `pybar` command to add a fancy statusbar anywhere that accepts
+**stdin**.
 
 
 ### Examples
@@ -28,7 +28,7 @@ statusbar anywhere that accepts **stdin**.
 dwm:
 ```
 while true; do
-    xsetroot -name "$(statusbar)"
+    xsetroot -name "$(pybar)"
     sleep 1
 done&
 ```
@@ -36,13 +36,13 @@ done&
 tmux:
 ```
 set -g status-interval 1
-set -g status-right "#(statusbar)"
+set -g status-right "#(pybar)"
 ```
 
 
 ## Install
 
-pybar / pybard uses `make` as a build system. Use:
+pybar uses `make` as a build system. Use:
 
 ```
 sudo make install
