@@ -3,7 +3,7 @@
 
 from glob import glob
 
-from lib_pybar.core import Block, RemoveBlock
+from lib_pybar.core import Block
 from lib_pybar.helpers import readint
 from lib_pybar.widgets import label, meter
 
@@ -31,10 +31,10 @@ class Power:
 power = Power()
 
 
-def battery_source():
-    if not power.batteries:
-        raise RemoveBlock
+has_batteries = power.batteries is not None
 
+
+def battery_source():
     percent = power.percent()
 
     if power.charging():
@@ -48,6 +48,7 @@ def battery_source():
 
 def main():
     return Block(
+        prerequisites=has_batteries,
         source=battery_source,
         sleep_ms=20000,
         weight=90,

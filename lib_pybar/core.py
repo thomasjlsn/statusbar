@@ -13,30 +13,27 @@ class SharedData:
     data = {}
 
 
-class RemoveBlock(Exception):
-    """
-    Blocks may raise this from their source function to cleanly remove
-    themselves from the statusbar.
-    """
-    pass
-
-
 class Block(SharedData):
-    def __init__(self, source=None, sleep_ms=1000, weight=0):
-        self.source: callable = source
+    def __init__(self,
+                 prerequisites: bool = True,
+                 source: callable = None,
+                 sleep_ms: int = 1000,
+                 weight: int = 0):
+
+        self.prerequisites = prerequisites
+        self.source = source
         self.sleep_ms = sleep_ms
         self.weight = str(weight).zfill(8)  # Determines order of blocks
         self.key = f'{self.weight}-{uuid4()}'
 
     def run(self):
+        if not self.prerequisites:
+            return
+
         while True:
             try:
                 self.data[self.key] = self.source()
                 sleep(self.sleep_ms / 1000)
-
-            except RemoveBlock:
-                self.data.pop(self.key, None)
-                break
 
             except Exception as e:
                 # Display the error briefly

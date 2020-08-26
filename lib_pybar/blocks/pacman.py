@@ -5,16 +5,13 @@ from os import popen
 from shutil import which
 from time import strftime
 
-from lib_pybar.core import Block, RemoveBlock
+from lib_pybar.core import Block
 from lib_pybar.widgets import label
 
 has_checkupdates = which('checkupdates')
 
 
 def checkupdates():
-    if not has_checkupdates:
-        raise RemoveBlock
-
     hour = int(strftime('%H'))
     day = strftime('%a').lower()
 
@@ -34,6 +31,7 @@ def checkupdates():
 
 def main():
     return Block(
+        prerequisites=has_checkupdates,
         source=checkupdates,
         sleep_ms=900000,
         weight=98,
