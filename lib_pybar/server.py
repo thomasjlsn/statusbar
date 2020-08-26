@@ -6,7 +6,7 @@ from socket import AF_UNIX, SOCK_STREAM, socket
 from threading import Thread
 
 from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
-                              network)
+                              network, pacman)
 from lib_pybar.core import PYBAR_SOCKET, StatusBar
 
 if geteuid() != 0:
@@ -60,6 +60,7 @@ def main():
             (True,  disks.main()),
             (True,  memory.main()),
             (True,  network.main()),
+            (True,  pacman.main()),
         )
         if condition
     }
