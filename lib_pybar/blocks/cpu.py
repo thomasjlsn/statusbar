@@ -7,7 +7,8 @@ from psutil import cpu_percent
 
 
 def percent():
-    return label('cpu', meter(cpu_percent()))
+    percent = cpu_percent()
+    return label('cpu', meter(percent)) if percent > 20 else None
 
 
 def main():

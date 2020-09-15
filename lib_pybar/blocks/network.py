@@ -11,6 +11,10 @@ class Network:
     interfaces = [d for d in listdir('/sys/class/net/') if d != 'lo']
     usage = (0, 0)
 
+    # number of iterations in which network is idle before hiding the block
+    idle_cycle_max = 2
+    idle_cycle_cur = 0
+
 
 network = Network()
 
@@ -28,6 +32,16 @@ def usage():
     rx_rate = (rx_bytes - rx_old)
 
     network.usage = (tx_bytes, rx_bytes)
+    print(tx_rate, rx_rate)
+
+    if (tx_rate == 0) and (rx_rate == 0):
+        network.idle_cycle_cur += 1
+        return None
+    else:
+        network.idle_cycle_cur = 0
+
+    if network.idle_cycle_cur == network.idle_cycle_max:
+        return None
 
     return ' '.join([
         f'↑ {human_readable(tx_rate)}',

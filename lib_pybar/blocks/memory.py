@@ -32,7 +32,7 @@ def memory_usage():
         mem['MemTotal'] - mem['Buffers'] - mem['Cached'] - mem['MemFree']
     )
 
-    return label('ram', meter(percent))
+    return label('ram', meter(percent)) if percent > 20 else None
 
 
 def main():
