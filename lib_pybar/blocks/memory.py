@@ -2,7 +2,10 @@
 """Memory usage."""
 
 from lib_pybar.core import Block
+from lib_pybar.helpers import readint
 from lib_pybar.widgets import label, meter
+
+swap_percent = 100 - readint('/proc/sys/vm/swappiness')
 
 
 def memory_usage():
@@ -32,7 +35,11 @@ def memory_usage():
         mem['MemTotal'] - mem['Buffers'] - mem['Cached'] - mem['MemFree']
     )
 
-    return label('ram', meter(percent)) if percent > 20 else None
+    # Only show memory usage when we are more than halfway to swapping
+    if percent > (swap_percent / 2):
+        return label('ram', meter(percent))
+    else:
+        return None
 
 
 def main():
