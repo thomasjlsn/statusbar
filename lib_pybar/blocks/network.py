@@ -32,7 +32,6 @@ def usage():
     rx_rate = (rx_bytes - rx_old)
 
     network.usage = (tx_bytes, rx_bytes)
-    print(tx_rate, rx_rate)
 
     if (tx_rate == 0) and (rx_rate == 0):
         network.idle_cycle_cur += 1
