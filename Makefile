@@ -25,6 +25,10 @@ uninstall: root disable-service
 	# Uninstalled pybar.
 	#
 
+arch-install: enable-pacman-hook install
+
+arch-uninstall: disable-pacman-hook uninstall
+
 # ==========================================================================
 # Dev level rules:
 #
@@ -37,6 +41,18 @@ config:
 	# Configuring pybar for your OS.
 	#
 	bash configure.sh
+
+disable-pacman-hook:
+	#
+	# Disabling pacman post-transaction hook.
+	#
+	@rm -fv /etc/pacman.d/hooks/pybar.hook ||:
+
+enable-pacman-hook:
+	#
+	# Setting up pacman post-transaction hook.
+	#
+	@cp -fv pybar_pacman.hook /etc/pacman.d/hooks/pybar.hook
 
 disable-service:
 	#

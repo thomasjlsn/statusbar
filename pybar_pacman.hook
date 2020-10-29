@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Reloading pybar to clear UPDATES notification.
+Exec = /usr/bin/systemctl restart pybar.service
+When = PostTransaction

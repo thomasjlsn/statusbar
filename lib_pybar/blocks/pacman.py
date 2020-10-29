@@ -10,6 +10,8 @@ from lib_pybar.widgets import label
 
 has_checkupdates = which('checkupdates')
 
+set()
+
 
 def checkupdates():
     hour = int(strftime('%H'))

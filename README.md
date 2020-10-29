@@ -42,17 +42,32 @@ set -g status-right "#(pybar)"
 
 ## Install
 
-pybar uses `make` as a build system. Use:
+Pybar uses `make` as a build system.
+
+For a basic install, use:
 
 ```
 sudo make install
 ```
 
-Installation requires root.
+Additionally, if you are on Arch Linux, pybar has a pacman module, which shows
+available updates. For it to work properly, a pacman post-transaction hook must
+be installed also.
 
+To install pybar with pacman support, use:
+
+```
+sudo make arch-install
+```
 
 ## Uninstall
 
 ```
 sudo make uninstall
+```
+
+If you are on Arch:
+
+```
+sudo make arch-uninstall
 ```
