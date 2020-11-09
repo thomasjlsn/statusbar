@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Memory usage."""
+'''Memory usage.'''
 
 from lib_pybar.core import Block
 from lib_pybar.helpers import readint

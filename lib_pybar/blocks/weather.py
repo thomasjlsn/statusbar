@@ -11,11 +11,11 @@ from requests import get
 # These environment variables are used to
 # set your location for the weather block.
 # Currently defaults to LA.
-PYBAR_LATT = getenv('PYBAR_LATT', 34.409211)
-PYBAR_LONG = getenv('PYBAR_LONG', -118.914837)
+PYBAR_WEATHER_LATTITUDE = getenv('PYBAR_WEATHER_LATTITUDE', 34.409211)
+PYBAR_WEATHER_LONGITUDE = getenv('PYBAR_WEATHER_LONGITUDE', -118.914837)
 
 # To specify celsius or fahrenheit
-PYBAR_TEMP_UNITS = getenv('PYBAR_UNITS', 'f').lower()[0]
+PYBAR_WEATHER_UNITS = getenv('PYBAR_WEATHER_UNITS', 'fahrenheit').lower()[0]
 
 _weather_conditions = {
     # key: (show?, 'name')   # original condition name
@@ -68,12 +68,15 @@ class MetaWeatherSearchAPI:
         ))['consolidated_weather']
 
 
-search = MetaWeatherSearchAPI(PYBAR_LATT, PYBAR_LONG)
+search = MetaWeatherSearchAPI(
+    PYBAR_WEATHER_LATTITUDE,
+    PYBAR_WEATHER_LONGITUDE,
+)
 
 preferred_units = {
     'c': celsius,
     'f': fahrenheit,
-}[PYBAR_TEMP_UNITS]
+}[PYBAR_WEATHER_UNITS]
 
 
 def check_weather():

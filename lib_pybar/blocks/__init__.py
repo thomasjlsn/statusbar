@@ -1,1 +1,1 @@
-"""The segments of the status bar."""
+'''The segments of the status bar.'''

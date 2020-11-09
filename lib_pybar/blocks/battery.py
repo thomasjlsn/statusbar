@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Current battery percentage."""
+'''Current battery percentage.'''
 
 from glob import glob
 

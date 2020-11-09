@@ -1,13 +1,15 @@
-#!/usr/bin/env python3
-"""A Clock."""
+'''A Clock.'''
 
+from os import getenv
 from time import strftime
 
 from lib_pybar.core import Block
 
+PYBAR_DATE_FORMAT = getenv('PYBAR_DATE_FORMAT', '%a, %b %d %H:%M')
+
 
 def time_now():
-    return strftime('%a, %b %d %H:%M')
+    return strftime(PYBAR_DATE_FORMAT)
 
 
 def main():

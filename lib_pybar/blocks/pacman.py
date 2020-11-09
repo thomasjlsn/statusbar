@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Check for package updates on Arch based distros."""
+'''Check for package updates on Arch based distros.'''
 
 from os import popen
 from shutil import which

@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Backlight level percentage."""
+'''Backlight level percentage.'''
 
 from glob import glob
 

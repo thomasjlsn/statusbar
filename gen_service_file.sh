@@ -19,7 +19,7 @@ fi
 
 cat << EOF > "pybar.service"
 [Unit]
-Description=statusbar server for tmux and similar
+Description=pybar: statusbar server
 Wants=network-online.target
 After=network-online.target
 Requires=$NM.service

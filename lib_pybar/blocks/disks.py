@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Disk usage."""
+'''Disk usage.'''
 
 from os import statvfs
 from os.path import basename, exists, islink, realpath
@@ -19,7 +18,7 @@ class Block_Devices:
             return [dev.strip() for dev in mnt.readlines()]
 
     def disks(self):
-        """Returns list of lists containing [disk, mountpoint]."""
+        '''Returns list of lists containing [disk, mountpoint].'''
         return [
             dev.split()[0:2] for dev in
             self.__mounted() if dev.startswith('/dev/sd')

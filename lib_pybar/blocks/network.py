@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Network usage."""
+'''Network usage.'''
 
 from os import listdir
 

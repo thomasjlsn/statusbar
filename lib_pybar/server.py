@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-
-from os import chmod, geteuid, remove
+from os import chmod, getenv, geteuid, remove
 from os.path import exists
 from socket import AF_UNIX, SOCK_STREAM, socket
 from threading import Thread
@@ -11,6 +9,8 @@ from lib_pybar.core import PYBAR_SOCKET, StatusBar
 
 if geteuid() != 0:
     raise PermissionError
+
+PYBAR_MAX_CONNECTIONS = getenv('PYBAR_MAX_CONNECTIONS', 5)
 
 
 class Server(StatusBar):
@@ -28,7 +28,7 @@ class Server(StatusBar):
         self.__ensure_bindpoint_is_avaiable()
         self.server.bind(PYBAR_SOCKET)
         self.__drop_permissions()
-        self.server.listen(5)
+        self.server.listen(PYBAR_MAX_CONNECTIONS)
 
     def __accept_connections(self):
         try:
@@ -52,16 +52,16 @@ def main():
     threads = {
         Thread(target=thread.run)
         for condition, thread in (
-            (True,  server),
-            (True,  battery.main()),
-            (False, backlight.main()),
-            (True,  date.main()),
-            (True,  cpu.main()),
-            (True,  disks.main()),
-            (True,  memory.main()),
-            (True,  network.main()),
-            (True,  pacman.main()),
-            (True,  weather.main()),
+            (True,                                server),
+            (getenv('PYBAR_ENABLE_BATTERY',   1), battery.main()),
+            (getenv('PYBAR_ENABLE_BACKLIGHT', 0), backlight.main()),
+            (getenv('PYBAR_ENABLE_DATE',      1), date.main()),
+            (getenv('PYBAR_ENABLE_CPU',       1), cpu.main()),
+            (getenv('PYBAR_ENABLE_DISKS',     1), disks.main()),
+            (getenv('PYBAR_ENABLE_MEMORY',    1), memory.main()),
+            (getenv('PYBAR_ENABLE_NETWORK',   1), network.main()),
+            (getenv('PYBAR_ENABLE_PACMAN',    1), pacman.main()),
+            (getenv('PYBAR_ENABLE_WEATHER',   1), weather.main()),
         )
         if condition
     }

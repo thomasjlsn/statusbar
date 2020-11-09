@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""CPU usage in percentage."""
+'''CPU usage in percentage.'''
 
 from lib_pybar.core import Block
 from lib_pybar.widgets import label, meter

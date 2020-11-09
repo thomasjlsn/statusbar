@@ -1,7 +1,8 @@
-#!/usr/bin/env python3
-"""widgets.py"""
+'''widgets.py'''
 
-from lib_pybar.args import args
+from os import getenv
+
+PYBAR_METER_WIDTH = getenv('PYBAR_METER_WIDTH', 10)
 
 
 def label(label_text, string):
@@ -9,7 +10,7 @@ def label(label_text, string):
 
 
 def __make_meter_values(meter_width):
-    """Assign unicode bars to percentages."""
+    '''Assign unicode bars to percentages.'''
     meter = {0: ' ' * meter_width}
     bar_chars = []
     cell_chars = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█']
@@ -33,7 +34,7 @@ def __make_meter_values(meter_width):
     return meter
 
 
-__meter_values = __make_meter_values(int(args.width))
+__meter_values = __make_meter_values(int(PYBAR_METER_WIDTH))
 
 
 def meter(percentage):

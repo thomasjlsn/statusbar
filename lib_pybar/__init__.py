@@ -1,1 +1,1 @@
-"""Pybar library."""
+'''Pybar library.'''

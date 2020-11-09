@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Various helper functions."""
+'''Various helper functions.'''
 
 from math import floor, log
 
@@ -18,10 +17,10 @@ def human_readable(size_in_bytes):
 
 
 def readint(file):
-    """
+    '''
     Many files in /sys/* and /proc/* contain single integer values.
     This reduces boilerplate.
-    """
+    '''
     with open(file, 'r') as f:
         val = int(f.readline())
 

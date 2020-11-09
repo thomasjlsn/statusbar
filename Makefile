@@ -3,13 +3,18 @@ all: root install
 # ==========================================================================
 # User level rules:
 #
-#     clean      uninstall pybar, delete all associated files
-#     install    install pybar
-#     uninstall  uninstall pybar
+#     clean            delete files associated with pybar
+#
+#     install          install pybar
+#     uninstall        uninstall pybar
+#
+#     arch-install     install pybar for arch linux
+#     arch-uninstall   uninstall pybar for arch linux
 #
 # ==========================================================================
 
 clean:
+	rm -fv pybar.conf ||:
 	rm -fv pybar.service ||:
 	#
 	# Restored to clean state.
@@ -40,7 +45,8 @@ config:
 	#
 	# Configuring pybar for your OS.
 	#
-	bash configure.sh
+	bash gen_config_file.sh
+	bash gen_service_file.sh
 
 disable-pacman-hook:
 	#
@@ -52,7 +58,7 @@ enable-pacman-hook:
 	#
 	# Setting up pacman post-transaction hook.
 	#
-	@cp -fv pybar_pacman.hook /etc/pacman.d/hooks/pybar.hook
+	@cp -fv pybar.hook /etc/pacman.d/hooks/pybar.hook
 
 disable-service:
 	#

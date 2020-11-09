@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""A simple client that recieves data from pybard."""
+'''A simple client that recieves data from pybar.'''
 
 from socket import AF_UNIX, SOCK_STREAM, socket
 from sys import exit, stderr, stdout

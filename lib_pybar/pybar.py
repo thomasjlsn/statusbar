@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
-"""Main entrypoint to pybar."""
+'''Main entrypoint to pybar.'''
 
-from sys import exit, stderr
-
-from lib_pybar.args import args
+from sys import argv, exit, stderr
 
 
 def main():
-    if args.run:
+    if len(argv) == 2 and argv[1] == 'run':
         try:
             from lib_pybar import server
             server.main()

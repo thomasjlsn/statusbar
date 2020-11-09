@@ -1,15 +1,14 @@
-#!/usr/bin/env python3
-
+from os import getenv
 from time import sleep
 from uuid import uuid4
 
 from lib_pybar.widgets import label
 
-PYBAR_SOCKET = '/tmp/pybar.sock'
+PYBAR_SOCKET = getenv('PYBAR_SOCKET', '/tmp/pybar.sock')
 
 
 class SharedData:
-    """Data shared between blocks and the statusbar."""
+    '''Data shared between blocks and the statusbar.'''
     data = {}
 
 
