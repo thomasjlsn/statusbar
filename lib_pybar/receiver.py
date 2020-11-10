@@ -1,6 +1,4 @@
-'''
-Recieve and print data from the server.
-'''
+'''Recieve and print data from the server.'''
 
 from socket import AF_UNIX, SOCK_STREAM, socket
 from sys import exit, stderr, stdout

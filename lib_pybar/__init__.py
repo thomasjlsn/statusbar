@@ -1,6 +1,4 @@
-'''
-Core pybar library.
-'''
+'''Core pybar library.'''
 
 from math import floor, log
 from os import getenv, system

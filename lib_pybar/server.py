@@ -1,6 +1,4 @@
-'''
-Pybar server.
-'''
+'''Pybar server.'''
 
 from os import chmod, getenv, remove
 from os.path import exists

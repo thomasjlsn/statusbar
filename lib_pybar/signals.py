@@ -1,16 +1,7 @@
-'''
-Signal definitions for pybar.
-'''
+'''Signal definitions for pybar.'''
 
 import signal
 from sys import stderr
-
-
-class flags:
-    abort = False
-    clear_updates = True
-    do_healthcheck = True
-    halt = False
 
 
 def _post_transaction_hook(*_):
@@ -32,6 +23,13 @@ def _pause_hook(*_):
 def _resume_hook(*_):
     stderr.write('running resume hook\n')
     flags.halt = False
+
+
+class flags:
+    abort = False
+    clear_updates = True
+    do_healthcheck = True
+    halt = False
 
 
 class hooks:

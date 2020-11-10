@@ -1,4 +1,4 @@
-'''pybar - help
+'''pybar
 
 Pybar is a minimal client / server statusbar for dwm, tmux, etc.
 
