@@ -26,7 +26,7 @@ Requires=$NM.service
 PartOf=$NM.service
 
 [Service]
-ExecStart=$(which pybar) run
+ExecStart=$(which pybar) start
 Restart=always
 User=root
 Group=root

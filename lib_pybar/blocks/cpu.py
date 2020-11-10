@@ -1,7 +1,6 @@
 '''CPU usage in percentage.'''
 
-from lib_pybar.core import Block
-from lib_pybar.widgets import label, meter
+from lib_pybar import Block, label, meter
 from psutil import cpu_percent
 
 

@@ -2,8 +2,7 @@
 
 from os import listdir
 
-from lib_pybar.core import Block
-from lib_pybar.helpers import human_readable, readint
+from lib_pybar import Block, human_readable, readint
 
 
 class Network:

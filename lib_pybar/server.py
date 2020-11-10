@@ -1,16 +1,17 @@
-from os import chmod, getenv, geteuid, remove
+'''
+Pybar server.
+'''
+
+from os import chmod, getenv, remove
 from os.path import exists
 from socket import AF_UNIX, SOCK_STREAM, socket
+from sys import stderr
 from threading import Thread
 
+from lib_pybar import PYBAR_MAX_CONNECTIONS, PYBAR_SOCKET, StatusBar
 from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
                               network, pacman, weather)
-from lib_pybar.core import PYBAR_SOCKET, StatusBar
-
-if geteuid() != 0:
-    raise PermissionError
-
-PYBAR_MAX_CONNECTIONS = getenv('PYBAR_MAX_CONNECTIONS', 5)
+from lib_pybar.signals import flags
 
 
 class Server(StatusBar):
@@ -38,11 +39,13 @@ class Server(StatusBar):
             client.close()
 
     def run(self):
+        stderr.write('starting pybar server\n')
         try:
             self.__start_server()
-            while True:
+            while not flags.abort:
                 self.__accept_connections()
         finally:
+            stderr.write('stopping pybar server\n')
             self.server.close()
 
 

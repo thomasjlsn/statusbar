@@ -3,8 +3,7 @@
 from os import statvfs
 from os.path import basename, exists, islink, realpath
 
-from lib_pybar.core import Block
-from lib_pybar.widgets import label, meter
+from lib_pybar import Block, flags, label, meter
 
 
 class Block_Devices:
@@ -27,7 +26,7 @@ class Block_Devices:
     seen = set()
 
     def next(self):
-        while True:
+        while not flags.abort:
             for disk in self.disks():
                 if disk[0] not in self.seen:
                     self.seen.add(disk[0])

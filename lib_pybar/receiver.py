@@ -1,9 +1,11 @@
-'''A simple client that recieves data from pybar.'''
+'''
+Recieve and print data from the server.
+'''
 
 from socket import AF_UNIX, SOCK_STREAM, socket
 from sys import exit, stderr, stdout
 
-from lib_pybar.core import PYBAR_SOCKET
+from lib_pybar import PYBAR_SOCKET
 
 
 def main():
@@ -12,7 +14,7 @@ def main():
         client.connect(PYBAR_SOCKET)
         stdout.write(client.recv(1024).decode('utf-8'))
     except ConnectionRefusedError as e:
-        stderr.write(f'{e}\n')
+        stderr.write(f'ConnectionRefusedError: {e}\n')
         exit(1)
     finally:
         client.close()

@@ -1,8 +1,6 @@
 '''Memory usage.'''
 
-from lib_pybar.core import Block
-from lib_pybar.helpers import readint
-from lib_pybar.widgets import label, meter
+from lib_pybar import Block, label, meter, readint
 
 swap_percent = 100 - readint('/proc/sys/vm/swappiness')
 

@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 '''pybar'''
 
-from lib_pybar import pybar
+from lib_pybar import __main__ as pybar
+from lib_pybar.signals import flags
 
 if __name__ == '__main__':
-    pybar.main()
+    try:
+        pybar.main()
+    except (EOFError, KeyboardInterrupt):
+        flags.abort = True

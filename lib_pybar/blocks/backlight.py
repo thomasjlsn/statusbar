@@ -2,9 +2,7 @@
 
 from glob import glob
 
-from lib_pybar.core import Block
-from lib_pybar.helpers import readint
-from lib_pybar.widgets import label, meter
+from lib_pybar import Block, label, meter, readint
 
 try:
     bl_max = readint(glob('/sys/class/backlight/*/max_brightness')[0])

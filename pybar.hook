@@ -1,9 +1,19 @@
 [Trigger]
+Operation = Install
+Type = Package
+Target = *
+
+[Trigger]
+Operation = Remove
+Type = Package
+Target = *
+
+[Trigger]
 Operation = Upgrade
 Type = Package
 Target = *
 
 [Action]
-Description = Reloading pybar to clear UPDATES notification.
-Exec = /usr/bin/systemctl restart pybar.service
+Description = Running pybar post transaction hook
+Exec = /usr/bin/pybar _pacman
 When = PostTransaction
