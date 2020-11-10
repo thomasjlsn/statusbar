@@ -1,6 +1,5 @@
 '''Check for package updates on Arch based distros.'''
 
-from dataclasses import dataclass
 from os import popen
 from shutil import which
 from sys import stderr
@@ -18,23 +17,19 @@ has_dependencies = all((
 
 # The pacman block keeps track of multiple things, each with their own
 # state, these dataclasses keep track of their state.
-@dataclass
 class state:
     init = True
 
-    @dataclass
     class pacnew:
         count = 0
         wait = 30
         timestamp = time()
 
-    @dataclass
     class orphans:
         count = 0
         wait = 30
         timestamp = time()
 
-    @dataclass
     class updates:
         count = 0
         wait = 60 * 30

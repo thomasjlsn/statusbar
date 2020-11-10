@@ -3,11 +3,9 @@ Signal definitions for pybar.
 '''
 
 import signal
-from dataclasses import dataclass
 from sys import stderr
 
 
-@dataclass
 class flags:
     abort = False
     clear_updates = True
@@ -26,21 +24,20 @@ def _abort_hook(*_):
     flags.abort = True
 
 
-def _stop_hook(*_):
-    stderr.write('running stop hook\n')
+def _pause_hook(*_):
+    stderr.write('running pause hook\n')
     flags.halt = True
 
 
-def _cont_hook(*_):
-    stderr.write('running cont hook\n')
+def _resume_hook(*_):
+    stderr.write('running resume hook\n')
     flags.halt = False
 
 
-@dataclass
 class hooks:
     abort = _abort_hook
-    cont = _cont_hook
-    stop = _stop_hook
+    resume = _resume_hook
+    pause = _pause_hook
     post_transaction = _post_transaction_hook
 
 
@@ -56,5 +53,5 @@ PYBAR_SIGSTOP = signal.SIGRTMIN + 3
 signal.signal(signal.SIGUSR1, hooks.post_transaction)
 signal.signal(signal.SIGTERM, hooks.abort)
 signal.signal(PYBAR_SIGABRT,  hooks.abort)
-signal.signal(PYBAR_SIGCONT,  hooks.cont)
-signal.signal(PYBAR_SIGSTOP,  hooks.stop)
+signal.signal(PYBAR_SIGCONT,  hooks.resume)
+signal.signal(PYBAR_SIGSTOP,  hooks.pause)
