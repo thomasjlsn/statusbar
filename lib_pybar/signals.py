@@ -30,6 +30,7 @@ class flags:
     clear_updates = True
     do_healthcheck = True
     halt = False
+    server_is_running = False
 
 
 class hooks:

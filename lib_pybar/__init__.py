@@ -19,27 +19,33 @@ class SharedData:
 
 class Block(SharedData):
     def __init__(self,
-                 prerequisites: bool = True,
+                 prerequisite: bool = True,
                  source: callable = None,
                  sleep_ms: int = 1000,
                  weight: int = 0):
 
-        self.prerequisites = prerequisites
+        self.prerequisite = prerequisite
         self.source = source
         self.sleep_ms = sleep_ms
         self.weight = str(weight).zfill(8)  # Determines order of blocks
         self.key = f'{self.weight}-{uuid4()}'
 
     def run(self):
-        if not self.prerequisites:
+        if not self.prerequisite:
             return
 
-        while not flags.abort:
-            try:
-                if flags.halt:
-                    interruptable_sleep(1_000)
-                    continue
+        # Do nothing while we wait for the server to start.
+        while not flags.server_is_running:
+            if flags.abort:
+                return
+            interruptable_sleep(100)
 
+        while not flags.abort:
+            if flags.halt:
+                interruptable_sleep(1_000)
+                continue
+
+            try:
                 self.data[self.key] = self.source()
                 interruptable_sleep(self.sleep_ms)
 

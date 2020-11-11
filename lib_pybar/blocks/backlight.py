@@ -21,7 +21,7 @@ def backlight_percentage() -> str:
 
 def main():
     return Block(
-        prerequisites=has_backlight_info,
+        prerequisite=has_backlight_info,
         source=backlight_percentage,
         sleep_ms=500,
         weight=95,

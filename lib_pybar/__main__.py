@@ -36,7 +36,7 @@ def main():
     if len(argv) == 2:
         from os import geteuid
         from signal import SIGUSR1
-        from lib_pybar import server, signals, send
+        from lib_pybar import send, server, signals
 
         if argv[1] in ('-h', '--help', 'help'):
             stderr.write(__doc__)

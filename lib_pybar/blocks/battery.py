@@ -44,7 +44,7 @@ def battery_source():
 
 def main():
     return Block(
-        prerequisites=has_batteries,
+        prerequisite=has_batteries,
         source=battery_source,
         sleep_ms=20000,
         weight=90,

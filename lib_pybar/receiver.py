@@ -1,7 +1,7 @@
 '''Recieve and print data from the server.'''
 
 from socket import AF_UNIX, SOCK_STREAM, socket
-from sys import exit, stderr, stdout
+from sys import stderr, stdout
 
 from lib_pybar import PYBAR_SOCKET
 

@@ -101,7 +101,7 @@ def checkupdates():
 
 def main():
     return Block(
-        prerequisites=has_dependencies,
+        prerequisite=has_dependencies,
         source=checkupdates,
         sleep_ms=1000 * 30,
         weight=98,

@@ -9,3 +9,6 @@ if __name__ == '__main__':
         pybar.main()
     except (EOFError, KeyboardInterrupt):
         flags.abort = True
+
+    if flags.abort:
+        exit(1)
