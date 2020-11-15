@@ -6,26 +6,21 @@ swap_percent = 100 - readint('/proc/sys/vm/swappiness')
 
 
 def memory_usage():
-    with open('/proc/meminfo', 'r') as f:
-        meminfo = [line.strip() for line in f.readlines()]
-
     mem = {}
 
-    for i in meminfo:
-        try:
-            key, val, _ = i.split()
-            key = key[:-1]
-        except ValueError:
-            try:
-                key, _ = i.split()
+    with open('/proc/meminfo', 'r') as f:
+        for line in f.readlines():
+            line = line.strip().split()
+
+            if len(line) == 3:
+                key, val, _ = line
                 key = key[:-1]
-                val = 0
-            except ValueError:
-                continue
-        try:
+
+            elif len(line) == 2:
+                key, val = line
+                key = key[:-1]
+
             mem[key] = int(val)
-        except TypeError:
-            continue
 
     # memory usage as calculated by `free(1)`
     percent = (100 / mem['MemTotal']) * (
