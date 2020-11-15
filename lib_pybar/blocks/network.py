@@ -5,16 +5,9 @@ from os import listdir
 from lib_pybar import Block, human_readable, readint
 
 
-class Network:
+class network:
     interfaces = [d for d in listdir('/sys/class/net/') if d != 'lo']
     usage = (0, 0)
-
-    # number of iterations in which network is idle before hiding the block
-    idle_cycle_max = 2
-    idle_cycle_cur = 0
-
-
-network = Network()
 
 
 def usage():
@@ -26,18 +19,12 @@ def usage():
 
     tx_old, rx_old = network.usage
 
-    tx_rate = (tx_bytes - tx_old)
-    rx_rate = (rx_bytes - rx_old)
+    rx_rate = rx_bytes - rx_old
+    tx_rate = tx_bytes - tx_old
 
     network.usage = (tx_bytes, rx_bytes)
 
-    if (tx_rate == 0) and (rx_rate == 0):
-        network.idle_cycle_cur += 1
-        return None
-    else:
-        network.idle_cycle_cur = 0
-
-    if network.idle_cycle_cur == network.idle_cycle_max:
+    if not any((tx_rate, rx_rate)):
         return None
 
     return ' '.join([
