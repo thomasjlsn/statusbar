@@ -50,7 +50,6 @@ PYBAR_SIGCONT = signal.SIGRTMIN + 2
 PYBAR_SIGSTOP = signal.SIGRTMIN + 3
 
 signal.signal(signal.SIGUSR1, hooks.post_transaction)
-signal.signal(signal.SIGTERM, hooks.abort)
 signal.signal(PYBAR_SIGABRT,  hooks.abort)
 signal.signal(PYBAR_SIGCONT,  hooks.resume)
 signal.signal(PYBAR_SIGSTOP,  hooks.pause)

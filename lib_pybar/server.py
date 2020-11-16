@@ -1,6 +1,5 @@
 '''Pybar server.'''
 
-import atexit
 import os
 import sys
 from os import path
@@ -16,31 +15,19 @@ from lib_pybar.signals import flags
 class Server(StatusBar):
     server = socket(AF_UNIX, SOCK_STREAM)
 
-    piddir = '/run/pybar/'
-    pidfile = '/run/pybar/pid'
-
-    def write_pidfile(self):
-        if not path.isdir(self.piddir):
-            os.makedirs(self.piddir)
-
-        with open(self.pidfile, 'w') as f:
-            f.write(str(os.getpid()))
-
-    def remove_pidfile(self):
-        sys.stderr.write('deleted server pidfile\n')
-        os.remove(self.pidfile)
-
-    def check_if_already_running(self):
-        if path.exists(self.pidfile):
-            sys.stderr.write('pybar server is already running\n')
-            flags.abort = True
-            exit(1)
-
     def start_server(self):
         # Only one instance of the server should be running.
-        self.check_if_already_running()
-        self.write_pidfile()
-        atexit.register(self.remove_pidfile)
+
+        # NOTE: no more checking if pybar pid exists before starting the
+        # server.
+        #
+        # Apparently, (after an update) systemd does this now (hooray! one
+        # more way those cunts are overstepping their bounds!). Trying to do
+        # it ourselves causes systemd to lose its mind, and subsequently, my
+        # entire system comes grinding to a halt via infinitely spawned
+        # pybar processes + never ending stop jobs.
+        #
+        # THANK YOU SO MUCH, SYSTEMD!
 
         # Ensure the socket is available.
         if path.exists(PYBAR_SOCKET):
