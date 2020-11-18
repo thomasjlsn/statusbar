@@ -12,7 +12,7 @@ class Block_Devices:
         if islink(mntfile):
             mntfile = realpath(mntfile)
 
-    def __mounted(self):
+    def mounted(self):
         with open(self.mntfile) as mnt:
             return [dev.strip() for dev in mnt.readlines()]
 
@@ -20,7 +20,7 @@ class Block_Devices:
         '''Returns list of lists containing [disk, mountpoint].'''
         return [
             dev.split()[0:2] for dev in
-            self.__mounted() if dev.startswith('/dev/sd')
+            self.mounted() if dev.startswith('/dev/sd')
         ]
 
     seen = set()

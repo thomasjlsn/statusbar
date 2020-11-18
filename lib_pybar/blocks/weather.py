@@ -2,12 +2,14 @@
 
 from re import search
 from sys import stderr
-from time import sleep, strftime
+from time import strftime
 
 from lib_pybar import Block
+from lib_pybar.config import config
 from requests import RequestException, get
 
-url = 'https://darksky.net/forecast/34.408,-118.915/us12/en'
+lat, lon = config.PYBAR_TEMPERATURE_LATLON
+url = f'https://darksky.net/forecast/{lat},{lon}/us12/en'
 rate_limit = 60 * 10
 
 
@@ -35,6 +37,8 @@ def get_temp():
 
         try:
             response = get(url)
+            temperature.was_last_checked = int(strftime('%s'))
+
             if response.status_code == 200:
                 temperature.raw = search(
                     r'(?<=summary swap">)[0-9]+(?=˚)', response.text
@@ -44,9 +48,16 @@ def get_temp():
             temperature.raw = None
             stderr.write(f'RequestException: {e}\n')
 
-    if int(strftime('%S')[0]) % 2 == 0:
+    if config.PYBAR_TEMPERATURE_UNITS == 'both':
+        if int(strftime('%S')[0]) % 2 == 0:
+            return f'{temperature.C()}°C'
+        return f'{temperature.F()}°F'
+
+    elif config.PYBAR_TEMPERATURE_UNITS == 'f':
+        return f'{temperature.F()}°F'
+
+    elif config.PYBAR_TEMPERATURE_UNITS == 'c':
         return f'{temperature.C()}°C'
-    return f'{temperature.F()}°F'
 
 
 def main():

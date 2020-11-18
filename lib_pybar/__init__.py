@@ -1,16 +1,12 @@
 '''Core pybar library.'''
 
 from math import floor, log
-from os import getenv, system
+from os import system
 from time import sleep
 from uuid import uuid4
 
 from lib_pybar.config import config
 from lib_pybar.signals import flags
-
-PYBAR_MAX_CONNECTIONS = config['server']['max_connections']
-PYBAR_SOCKET = config['server']['socket']
-PYBAR_METER_WIDTH = config['statusbar']['meter_width']
 
 
 class SharedData:
@@ -138,10 +134,10 @@ def __make_meter_values(meter_width):
     return meter
 
 
-__meter_values = __make_meter_values(int(PYBAR_METER_WIDTH))
+__meter_values = __make_meter_values(int(config.PYBAR_STATUSBAR_METER_WIDTH))
 
 
 def meter(percentage):
-    if config['statusbar']['meters']:
+    if config.PYBAR_STATUSBAR_METERS:
         return __meter_values[int(percentage)]
     return f'{int(percentage)}%'

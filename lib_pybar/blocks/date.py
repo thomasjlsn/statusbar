@@ -5,11 +5,9 @@ from time import strftime
 from lib_pybar import Block
 from lib_pybar.config import config
 
-PYBAR_DATE_FORMAT = config['statusbar']['date_format']
-
 
 def time_now():
-    return strftime(PYBAR_DATE_FORMAT).replace('  ', ' ')
+    return strftime(config.PYBAR_STATUSBAR_DATE_FORMAT).replace('  ', ' ')
 
 
 def main():

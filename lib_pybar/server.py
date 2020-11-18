@@ -6,7 +6,7 @@ from os import path
 from socket import AF_UNIX, SOCK_STREAM, socket
 from threading import Thread
 
-from lib_pybar import PYBAR_MAX_CONNECTIONS, PYBAR_SOCKET, StatusBar
+from lib_pybar import StatusBar
 from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
                               network, pacman, weather)
 from lib_pybar.config import config
@@ -31,25 +31,31 @@ class Server(StatusBar):
         # THANK YOU SO MUCH, SYSTEMD!
 
         # Ensure the socket is available.
-        if path.exists(PYBAR_SOCKET):
-            os.remove(PYBAR_SOCKET)
+        if path.exists(config.PYBAR_SERVER_SOCKET):
+            os.remove(config.PYBAR_SERVER_SOCKET)
 
-        self.server.bind(PYBAR_SOCKET)
+        self.server.bind(config.PYBAR_SERVER_SOCKET)
 
         # Unix sockets only need write permission.
-        os.chmod(PYBAR_SOCKET, 0o222)
+        os.chmod(config.PYBAR_SERVER_SOCKET, 0o222)
 
     def accept_connections(self):
         try:
-            client, address = self.server.accept()
-            client.send(bytes(self.statusbar(), 'utf-8'))
+            current_status = self.statusbar()
+
+            if len(current_status) > config.PYBAR_SERVER_MTU:
+                current_status = current_status[:-config.PYBAR_SERVER_MTU]
+
+            client, _ = self.server.accept()
+            client.send(bytes(current_status, config.PYBAR_SERVER_ENCODING))
+
         finally:
             client.close()
 
     def run(self):
         try:
             self.start_server()
-            self.server.listen(PYBAR_MAX_CONNECTIONS)
+            self.server.listen(config.PYBAR_SERVER_MAX_CONNECTIONS)
 
             flags.server_is_running = True
 
@@ -70,14 +76,14 @@ def main():
         for condition, thread in (
             (True,                          server),
             (True,                          date.main()),
-            (config['blocks']['battery'],   battery.main()),
-            (config['blocks']['backlight'], backlight.main()),
-            (config['blocks']['cpu'],       cpu.main()),
-            (config['blocks']['disks'],     disks.main()),
-            (config['blocks']['memory'],    memory.main()),
-            (config['blocks']['network'],   network.main()),
-            (config['blocks']['pacman'],    pacman.main()),
-            (config['blocks']['weather'],   weather.main()),
+            (config.PYBAR_BLOCKS_BATTERY,   battery.main()),
+            (config.PYBAR_BLOCKS_BACKLIGHT, backlight.main()),
+            (config.PYBAR_BLOCKS_CPU,       cpu.main()),
+            (config.PYBAR_BLOCKS_DISKS,     disks.main()),
+            (config.PYBAR_BLOCKS_MEMORY,    memory.main()),
+            (config.PYBAR_BLOCKS_NETWORK,   network.main()),
+            (config.PYBAR_BLOCKS_PACMAN,    pacman.main()),
+            (config.PYBAR_BLOCKS_WEATHER,   weather.main()),
         )
         if condition
     }
