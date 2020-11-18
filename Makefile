@@ -17,7 +17,7 @@ clean:
 	rm -fv pybar.conf ||:
 	rm -fv pybar.service ||:
 
-install: root pip-install enable-service reload
+install: root config pip-install enable-service reload
 
 uninstall: root disable-service
 
