@@ -1,11 +1,11 @@
 '''A Clock.'''
 
-from os import getenv
 from time import strftime
 
 from lib_pybar import Block
+from lib_pybar.config import config
 
-PYBAR_DATE_FORMAT = getenv('PYBAR_DATE_FORMAT', '%a, %b %d %k:%M')
+PYBAR_DATE_FORMAT = config['statusbar']['date_format']
 
 
 def time_now():

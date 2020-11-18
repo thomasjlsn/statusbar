@@ -5,11 +5,12 @@ from os import getenv, system
 from time import sleep
 from uuid import uuid4
 
+from lib_pybar.config import config
 from lib_pybar.signals import flags
 
-PYBAR_MAX_CONNECTIONS = getenv('PYBAR_MAX_CONNECTIONS', 5)
-PYBAR_METER_WIDTH = getenv('PYBAR_METER_WIDTH', 10)
-PYBAR_SOCKET = getenv('PYBAR_SOCKET', '/tmp/pybar.sock')
+PYBAR_MAX_CONNECTIONS = config['server']['max_connections']
+PYBAR_SOCKET = config['server']['socket']
+PYBAR_METER_WIDTH = config['statusbar']['meter_width']
 
 
 class SharedData:
@@ -141,4 +142,6 @@ __meter_values = __make_meter_values(int(PYBAR_METER_WIDTH))
 
 
 def meter(percentage):
-    return __meter_values[int(percentage)]
+    if config['statusbar']['meters']:
+        return __meter_values[int(percentage)]
+    return f'{int(percentage)}%'

@@ -9,6 +9,7 @@ from threading import Thread
 from lib_pybar import PYBAR_MAX_CONNECTIONS, PYBAR_SOCKET, StatusBar
 from lib_pybar.blocks import (backlight, battery, cpu, date, disks, memory,
                               network, pacman, weather)
+from lib_pybar.config import config
 from lib_pybar.signals import flags
 
 
@@ -67,16 +68,16 @@ def main():
     threads = {
         Thread(target=thread.run)
         for condition, thread in (
-            (True,                                   server),
-            (os.getenv('PYBAR_ENABLE_BATTERY',   1), battery.main()),
-            (os.getenv('PYBAR_ENABLE_BACKLIGHT', 0), backlight.main()),
-            (os.getenv('PYBAR_ENABLE_DATE',      1), date.main()),
-            (os.getenv('PYBAR_ENABLE_CPU',       1), cpu.main()),
-            (os.getenv('PYBAR_ENABLE_DISKS',     1), disks.main()),
-            (os.getenv('PYBAR_ENABLE_MEMORY',    1), memory.main()),
-            (os.getenv('PYBAR_ENABLE_NETWORK',   1), network.main()),
-            (os.getenv('PYBAR_ENABLE_PACMAN',    1), pacman.main()),
-            (os.getenv('PYBAR_ENABLE_WEATHER',   1), weather.main()),
+            (True,                          server),
+            (True,                          date.main()),
+            (config['blocks']['battery'],   battery.main()),
+            (config['blocks']['backlight'], backlight.main()),
+            (config['blocks']['cpu'],       cpu.main()),
+            (config['blocks']['disks'],     disks.main()),
+            (config['blocks']['memory'],    memory.main()),
+            (config['blocks']['network'],   network.main()),
+            (config['blocks']['pacman'],    pacman.main()),
+            (config['blocks']['weather'],   weather.main()),
         )
         if condition
     }
